@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { selectors, useStrongholdStore } from "@/lib/store";
 import type { ResourceType } from "@/lib/types";
+import { RESOURCE_TYPES } from "@/lib/types";
 
 const RESOURCE_LABELS: Record<ResourceType, string> = {
   wealth: "Wealth",

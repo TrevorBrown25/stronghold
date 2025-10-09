@@ -94,6 +94,12 @@ const storage = typeof window !== "undefined"
 const baseWorkOrderCapacity = 2;
 const baseTrainingCapacity = 1;
 
+const STARTING_RESOURCES: Record<ResourceType, number> = {
+  wealth: 2,
+  supplies: 2,
+  loyalty: 1
+};
+
 function applyCost(
   resources: StrongholdState["resources"],
   cost: Partial<Record<ResourceType, number>>
@@ -594,4 +600,5 @@ export const selectors = {
   })
 };
 
+export { STARTING_RESOURCES };
 export type { StrongholdState };
