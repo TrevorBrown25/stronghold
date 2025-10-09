@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 
 import { CaptainsPanel } from "@/components/CaptainsPanel";
+import { EditLockBanner } from "@/components/EditLockBanner";
 import { EventsPanel } from "@/components/EventsPanel";
 import { IncomePanel } from "@/components/IncomePanel";
 import { MissionsPanel } from "@/components/MissionsPanel";
@@ -14,6 +15,7 @@ import { ResourceTracker } from "@/components/ResourceTracker";
 import { TroopTable } from "@/components/TroopTable";
 import { TurnSummaryModal } from "@/components/TurnSummaryModal";
 import { ResetConfirmationModal } from "@/components/ResetConfirmationModal";
+import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { useStrongholdStore } from "@/lib/store";
 
 export default function Home() {
@@ -24,8 +26,10 @@ export default function Home() {
   const resetCampaign = useStrongholdStore((state) => state.resetCampaign);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const isLocked = useEditLockStore(selectIsLocked);
 
-  const handleEndTurn = useCallback(() => {
+  const handleEndTurn = () => {
+    if (isLocked) return;
     setSummaryOpen(true);
   }, []);
 
@@ -34,11 +38,13 @@ export default function Home() {
   }, []);
 
   const handleConfirmTurn = useCallback(() => {
+    if (isLocked) return;
     completeTurn();
     setSummaryOpen(false);
   }, [completeTurn]);
 
   const handleExport = () => {
+    if (isLocked) return;
     const data = exportState();
     const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -62,6 +68,11 @@ export default function Home() {
     setResetConfirmOpen(false);
   }, [resetCampaign]);
 
+  const handleNextPhase = () => {
+    if (isLocked) return;
+    nextPhase();
+  };
+
   const renderPhaseContent = () => {
     switch (activePhase) {
       case "Income & Edict":
@@ -83,6 +94,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-parchment p-6">
+      <EditLockBanner />
       <div className="mx-auto flex max-w-7xl gap-6">
         <PhaseSidebar onCompleteTurn={handleEndTurn} />
         <div className="flex flex-1 flex-col gap-6">
@@ -92,20 +104,23 @@ export default function Home() {
           <TroopTable />
           <div className="flex flex-wrap items-center gap-3 rounded-3xl bg-white/70 p-4 shadow-lg">
             <button
-              onClick={nextPhase}
-              className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark"
+              onClick={handleNextPhase}
+              disabled={isLocked}
+              className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
             >
               Next Phase
             </button>
             <button
               onClick={handleExport}
-              className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold hover:bg-ink/20"
+              disabled={isLocked}
+              className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
             >
               Export JSON
             </button>
             <button
               onClick={handleOpenResetConfirm}
-              className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100"
+              disabled={isLocked}
+              className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
             >
               Reset Campaign
             </button>

@@ -14,9 +14,9 @@ The app persists state to `localStorage`. Use the **Export JSON** button to down
 ## Features
 
 - Phase-based workflow matching the Stronghold turn structure (Income, Projects, Recruitment, PC Actions, Missions, Events)
-- Resource tracker with Work Order and Training capacity summaries, festival action, and intel management
+- Resource tracker with Work Order and Training capacity summaries, plus a festival action for balancing Wealth, Supplies, and Loyalty (campaigns begin at 2 Wealth, 2 Supplies, 1 Loyalty)
 - Project and recruitment management with cost enforcement, rush construction mechanic, and progress tracking
-- Mission planner with captain/troop assignments, 2d12 rolls, intel-powered rerolls, and outcome logging
+- Mission planner with captain/troop assignments, 2d12 rolls, and outcome logging
 - Troop roster with veterancy tracking and status management
 - Event log and PC action journal for session notes
 - End-of-turn summary modal and JSON export/reset utilities

@@ -1,5 +1,6 @@
 "use client";
 
+import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { useStrongholdStore } from "@/lib/store";
 
 interface TurnSummaryModalProps {
@@ -14,6 +15,7 @@ export function TurnSummaryModal({ open, onClose, onConfirm }: TurnSummaryModalP
   const recruitments = useStrongholdStore((state) => state.recruitments);
   const resources = useStrongholdStore((state) => state.resources);
   const events = useStrongholdStore((state) => state.events);
+  const isLocked = useEditLockStore(selectIsLocked);
 
   if (!open) return null;
 
@@ -30,7 +32,6 @@ export function TurnSummaryModal({ open, onClose, onConfirm }: TurnSummaryModalP
               <li>Wealth: {resources.wealth}</li>
               <li>Supplies: {resources.supplies}</li>
               <li>Loyalty: {resources.loyalty}</li>
-              <li>Intel: {resources.intel}</li>
             </ul>
           </SummaryCard>
           <SummaryCard title="Missions">
@@ -98,7 +99,8 @@ export function TurnSummaryModal({ open, onClose, onConfirm }: TurnSummaryModalP
           </button>
           <button
             onClick={onConfirm}
-            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark"
+            disabled={isLocked}
+            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
           >
             Advance Turn
           </button>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { selectors, useStrongholdStore } from "@/lib/store";
 import type { ProjectInstance, ProjectTemplate } from "@/lib/types";
 
@@ -30,8 +31,10 @@ export function ProjectsPanel() {
   const available = selectors.availableProjects();
   const [selected, setSelected] = useState<string>(available[0]?.id ?? "");
   const [message, setMessage] = useState<string | null>(null);
+  const isLocked = useEditLockStore(selectIsLocked);
 
   const handleStart = () => {
+    if (isLocked) return;
     const template = available.find((item) => item.id === selected);
     if (!template) return;
     try {
@@ -43,11 +46,13 @@ export function ProjectsPanel() {
   };
 
   const handleAdvance = (project: ProjectInstance) => {
+    if (isLocked) return;
     advanceProject(project.id);
     setMessage(`Advanced ${project.name}.`);
   };
 
   const handleRush = (project: ProjectInstance) => {
+    if (isLocked) return;
     const result = rushProject(project.id);
     if (!result) {
       setMessage("Cannot rush this project right now.");
@@ -74,6 +79,7 @@ export function ProjectsPanel() {
             value={selected}
             onChange={(event) => setSelected(event.target.value)}
             className="rounded-full border border-ink/20 bg-white px-3 py-2 text-sm"
+            disabled={isLocked}
           >
             {available.map((template) => (
               <option key={template.id} value={template.id}>
@@ -83,7 +89,8 @@ export function ProjectsPanel() {
           </select>
           <button
             onClick={handleStart}
-            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark"
+            disabled={isLocked}
+            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
           >
             Start Project
           </button>
@@ -130,19 +137,22 @@ export function ProjectsPanel() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleAdvance(project)}
-                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20"
+                      disabled={isLocked}
+                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       Advance
                     </button>
                     <button
                       onClick={() => handleRush(project)}
-                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20"
+                      disabled={isLocked}
+                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       Rush
                     </button>
                     <button
                       onClick={() => removeProject(project.id)}
-                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
+                      disabled={isLocked}
+                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       Remove
                     </button>

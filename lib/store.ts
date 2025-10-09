@@ -43,10 +43,8 @@ export const PHASES: PhaseKey[] = [
 interface StrongholdState {
   turn: number;
   activePhase: PhaseKey;
-  resources: Record<ResourceType, number> & {
-    intel: number;
-    festivalUsed: boolean;
-  };
+  resources: Record<ResourceType, number>;
+  festivalUsed: boolean;
   edict?: "Harvest" | "Trade" | "Town Hall" | "Draft";
   edictTurn?: number;
   projects: ProjectInstance[];
@@ -58,8 +56,6 @@ interface StrongholdState {
   notes: NoteEntry[];
   turnHistory: string[];
   incrementResource: (resource: ResourceType, delta: number) => void;
-  spendIntel: () => boolean;
-  addIntel: () => void;
   applyEdict: (edict: StrongholdState["edict"]) => void;
   runFestival: () => boolean;
   startProject: (template: ProjectTemplate) => void;
@@ -97,6 +93,12 @@ const storage = typeof window !== "undefined"
 
 const baseWorkOrderCapacity = 2;
 const baseTrainingCapacity = 1;
+
+const STARTING_RESOURCES: Record<ResourceType, number> = {
+  wealth: 2,
+  supplies: 2,
+  loyalty: 1
+};
 
 function applyCost(
   resources: StrongholdState["resources"],
@@ -174,12 +176,11 @@ export const useStrongholdStore = create<StrongholdState>()(
         turn: 1,
         activePhase: PHASES[0],
         resources: {
-          wealth: 3,
-          supplies: 3,
-          loyalty: 3,
-          intel: 0,
-          festivalUsed: false
+          wealth: 2,
+          supplies: 2,
+          loyalty: 1
         },
+        festivalUsed: false,
         edict: undefined,
         edictTurn: undefined,
         projects: [],
@@ -204,28 +205,9 @@ export const useStrongholdStore = create<StrongholdState>()(
             };
           });
         },
-        spendIntel: () => {
-          const { resources } = get();
-          if (resources.intel <= 0) return false;
-          set({
-            resources: {
-              ...resources,
-              intel: resources.intel - 1
-            }
-          });
-          return true;
-        },
-        addIntel: () => {
-          set((state) => ({
-            resources: {
-              ...state.resources,
-              intel: Math.min(3, state.resources.intel + 1)
-            }
-          }));
-        },
         runFestival: () => {
-          const { resources } = get();
-          if (resources.festivalUsed) return false;
+          const { resources, festivalUsed } = get();
+          if (festivalUsed) return false;
           const cost: Partial<Record<ResourceType, number>> = {
             wealth: 1,
             supplies: 1
@@ -234,9 +216,9 @@ export const useStrongholdStore = create<StrongholdState>()(
           set({
             resources: {
               ...applyCost(resources, cost),
-              loyalty: Math.min(MAX_RESOURCE, resources.loyalty + 1),
-              festivalUsed: true
-            }
+              loyalty: Math.min(MAX_RESOURCE, resources.loyalty + 1)
+            },
+            festivalUsed: true
           });
           return true;
         },
@@ -562,10 +544,8 @@ export const useStrongholdStore = create<StrongholdState>()(
               ...captain,
               assignedMissionId: null
             })),
-            resources: {
-              ...state.resources,
-              festivalUsed: false
-            },
+            resources: { ...state.resources },
+            festivalUsed: false,
             turnHistory: [...state.turnHistory, summary]
           });
         },
@@ -578,12 +558,11 @@ export const useStrongholdStore = create<StrongholdState>()(
             turn: 1,
             activePhase: PHASES[0],
             resources: {
-              wealth: 3,
-              supplies: 3,
-              loyalty: 3,
-              intel: 0,
-              festivalUsed: false
+              wealth: 2,
+              supplies: 2,
+              loyalty: 1
             },
+            festivalUsed: false,
             edict: undefined,
             edictTurn: undefined,
             projects: [],
@@ -621,4 +600,5 @@ export const selectors = {
   })
 };
 
+export { STARTING_RESOURCES };
 export type { StrongholdState };
