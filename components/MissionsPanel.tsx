@@ -23,8 +23,6 @@ export function MissionsPanel() {
   const deleteMission = useStrongholdStore((state) => state.deleteMission);
   const toggleCaptainAssignment = useStrongholdStore((state) => state.toggleCaptainAssignment);
   const toggleTroopAssignment = useStrongholdStore((state) => state.toggleTroopAssignment);
-  const spendIntel = useStrongholdStore((state) => state.spendIntel);
-  const resources = useStrongholdStore((state) => state.resources);
   const captains = useStrongholdStore(selectors.availableCaptains);
   const troops = useStrongholdStore(selectors.availableTroops);
 
@@ -67,16 +65,6 @@ export function MissionsPanel() {
   const handleRoll = (mission: Mission) => {
     resolveMissionRoll(mission.id, mission.modifier);
     setMessage(`Rolled mission ${mission.name}.`);
-  };
-
-  const handleReroll = (mission: Mission) => {
-    const spent = spendIntel();
-    if (!spent) {
-      setMessage("No intel available to reroll.");
-      return;
-    }
-    resolveMissionRoll(mission.id, mission.modifier);
-    setMessage(`Intel spent to reroll ${mission.name}.`);
   };
 
   const assignedTroops = (mission: Mission) =>
@@ -213,12 +201,6 @@ export function MissionsPanel() {
                       className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20"
                     >
                       Roll Mission
-                    </button>
-                    <button
-                      onClick={() => handleReroll(mission)}
-                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20"
-                    >
-                      Spend Intel ({resources.intel})
                     </button>
                     <button
                       onClick={() => deleteMission(mission.id)}
