@@ -71,17 +71,6 @@ export function MissionsPanel() {
     setMessage(`Rolled mission ${mission.name}.`);
   };
 
-  const handleReroll = (mission: Mission) => {
-    if (isLocked) return;
-    const spent = spendIntel();
-    if (!spent) {
-      setMessage("No intel available to reroll.");
-      return;
-    }
-    resolveMissionRoll(mission.id, mission.modifier);
-    setMessage(`Intel spent to reroll ${mission.name}.`);
-  };
-
   const assignedTroops = (mission: Mission) =>
     mission.assignedTroopIds
       .map((id) => troops.find((troop) => troop.id === id))
@@ -224,13 +213,6 @@ export function MissionsPanel() {
                       className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       Roll Mission
-                    </button>
-                    <button
-                      onClick={() => handleReroll(mission)}
-                      disabled={isLocked}
-                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      Spend Intel ({resources.intel})
                     </button>
                     <button
                       onClick={() => deleteMission(mission.id)}
