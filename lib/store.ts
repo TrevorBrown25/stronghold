@@ -89,8 +89,10 @@ interface StrongholdState {
 const MAX_RESOURCE = 5;
 const MIN_RESOURCE = 0;
 
+type PersistedStrongholdState = Omit<StrongholdState, "turnHistory">;
+
 const storage = typeof window !== "undefined"
-  ? createJSONStorage<StrongholdState>(() => localStorage)
+  ? createJSONStorage<PersistedStrongholdState>(() => localStorage)
   : undefined;
 
 const baseWorkOrderCapacity = 2;
@@ -167,7 +169,7 @@ function determineMissionResult(total: number): string {
 
 export const useStrongholdStore = create<StrongholdState>()(
   devtools(
-    persist(
+    persist<StrongholdState, [], [], PersistedStrongholdState>(
       (set, get) => ({
         turn: 1,
         activePhase: PHASES[0],
@@ -598,7 +600,7 @@ export const useStrongholdStore = create<StrongholdState>()(
       {
         name: "stronghold-store",
         storage,
-        partialize: ({ turnHistory, ...rest }) => rest
+        partialize: ({ turnHistory, ...rest }): PersistedStrongholdState => rest
       }
     )
   )
