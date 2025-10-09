@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #2f1b0c;
+  background-color: #f2e8d5;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background-image: radial-gradient(
+    circle at top left,
+    rgba(255, 255, 255, 0.6),
+    rgba(210, 180, 140, 0.6)
+  );
+  background-attachment: fixed;
+  background-size: cover;
+  color: #2f1b0c;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #9b4a1b;
+  border-radius: 9999px;
+}
