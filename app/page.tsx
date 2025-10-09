@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { CaptainsPanel } from "@/components/CaptainsPanel";
 import { EventsPanel } from "@/components/EventsPanel";
@@ -13,6 +13,7 @@ import { RecruitmentPanel } from "@/components/RecruitmentPanel";
 import { ResourceTracker } from "@/components/ResourceTracker";
 import { TroopTable } from "@/components/TroopTable";
 import { TurnSummaryModal } from "@/components/TurnSummaryModal";
+import { ResetConfirmationModal } from "@/components/ResetConfirmationModal";
 import { useStrongholdStore } from "@/lib/store";
 
 export default function Home() {
@@ -22,15 +23,20 @@ export default function Home() {
   const exportState = useStrongholdStore((state) => state.exportState);
   const resetCampaign = useStrongholdStore((state) => state.resetCampaign);
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
 
-  const handleEndTurn = () => {
+  const handleEndTurn = useCallback(() => {
     setSummaryOpen(true);
-  };
+  }, []);
 
-  const handleConfirmTurn = () => {
+  const handleCloseSummary = useCallback(() => {
+    setSummaryOpen(false);
+  }, []);
+
+  const handleConfirmTurn = useCallback(() => {
     completeTurn();
     setSummaryOpen(false);
-  };
+  }, [completeTurn]);
 
   const handleExport = () => {
     const data = exportState();
@@ -42,6 +48,19 @@ export default function Home() {
     link.click();
     URL.revokeObjectURL(url);
   };
+
+  const handleOpenResetConfirm = useCallback(() => {
+    setResetConfirmOpen(true);
+  }, []);
+
+  const handleCloseResetConfirm = useCallback(() => {
+    setResetConfirmOpen(false);
+  }, []);
+
+  const handleConfirmReset = useCallback(() => {
+    resetCampaign();
+    setResetConfirmOpen(false);
+  }, [resetCampaign]);
 
   const renderPhaseContent = () => {
     switch (activePhase) {
@@ -85,7 +104,7 @@ export default function Home() {
               Export JSON
             </button>
             <button
-              onClick={resetCampaign}
+              onClick={handleOpenResetConfirm}
               className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100"
             >
               Reset Campaign
@@ -95,8 +114,13 @@ export default function Home() {
       </div>
       <TurnSummaryModal
         open={summaryOpen}
-        onClose={() => setSummaryOpen(false)}
+        onClose={handleCloseSummary}
         onConfirm={handleConfirmTurn}
+      />
+      <ResetConfirmationModal
+        open={resetConfirmOpen}
+        onCancel={handleCloseResetConfirm}
+        onConfirm={handleConfirmReset}
       />
     </main>
   );
