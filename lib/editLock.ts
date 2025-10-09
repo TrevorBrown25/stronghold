@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 
-const PASSWORD = process.env.NEXT_PUBLIC_EDIT_PASSWORD ?? "stronghold";
+const PASSWORD = process.env.NEXT_PUBLIC_EDIT_PASSWORD ?? "TMG";
 
 interface EditLockState {
   isLocked: boolean;
