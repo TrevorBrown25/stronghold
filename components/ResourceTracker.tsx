@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 
+import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { selectors, useStrongholdStore } from "@/lib/store";
 import type { ResourceType } from "@/lib/types";
 
@@ -20,6 +21,7 @@ export function ResourceTracker() {
   const runFestival = useStrongholdStore((state) => state.runFestival);
   const { used, capacity } = useStrongholdStore(selectors.workOrderSummary);
   const { active, capacity: trainingCap } = useStrongholdStore(selectors.trainingSummary);
+  const isLocked = useEditLockStore(selectIsLocked);
 
   const canFestival = useMemo(
     () => !resources.festivalUsed,
@@ -56,13 +58,15 @@ export function ResourceTracker() {
             <div className="flex gap-2">
               <button
                 onClick={() => incrementResource(key as ResourceType, -1)}
-                className="flex-1 rounded-full bg-ink/10 py-1 text-sm font-semibold hover:bg-ink/20"
+                disabled={isLocked}
+                className="flex-1 rounded-full bg-ink/10 py-1 text-sm font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 –
               </button>
               <button
                 onClick={() => incrementResource(key as ResourceType, 1)}
-                className="flex-1 rounded-full bg-ink/10 py-1 text-sm font-semibold hover:bg-ink/20"
+                disabled={isLocked}
+                className="flex-1 rounded-full bg-ink/10 py-1 text-sm font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 +
               </button>
@@ -73,7 +77,7 @@ export function ResourceTracker() {
       <div className="flex flex-wrap items-center gap-3">
         <button
           onClick={() => runFestival()}
-          disabled={!canFestival}
+          disabled={isLocked || !canFestival}
           className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
           title="Spend 1 Wealth and 1 Supplies to gain +1 Loyalty. Once per turn."
         >
@@ -81,13 +85,15 @@ export function ResourceTracker() {
         </button>
         <button
           onClick={() => addIntel()}
-          className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold hover:bg-ink/20"
+          disabled={isLocked}
+          className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
         >
           Gain Intel
         </button>
         <button
           onClick={() => spendIntel()}
-          className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold hover:bg-ink/20"
+          disabled={isLocked}
+          className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
         >
           Spend Intel
         </button>
