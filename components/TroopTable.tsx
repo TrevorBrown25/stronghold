@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { useStrongholdStore } from "@/lib/store";
 import type { Troop, TroopStatus } from "@/lib/types";
 
@@ -16,6 +17,7 @@ export function TroopTable() {
   const troops = useStrongholdStore((state) => state.troops);
   const updateTroopStatus = useStrongholdStore((state) => state.updateTroopStatus);
   const [sortKey, setSortKey] = useState<"tier" | "status" | "name">("tier");
+  const isLocked = useEditLockStore(selectIsLocked);
 
   const sorted = useMemo(() => {
     return troops.slice().sort((a, b) => {
@@ -26,10 +28,12 @@ export function TroopTable() {
   }, [troops, sortKey]);
 
   const handleStatusChange = (troop: Troop, status: TroopStatus) => {
+    if (isLocked) return;
     updateTroopStatus(troop.id, status);
   };
 
   const handleMissionSuccess = (troop: Troop) => {
+    if (isLocked) return;
     updateTroopStatus(troop.id, troop.status, 1);
   };
 
@@ -48,6 +52,7 @@ export function TroopTable() {
             value={sortKey}
             onChange={(event) => setSortKey(event.target.value as typeof sortKey)}
             className="rounded-full border border-ink/20 bg-white px-3 py-1"
+            disabled={isLocked}
           >
             <option value="tier">Tier</option>
             <option value="status">Status</option>
@@ -79,6 +84,7 @@ export function TroopTable() {
                       handleStatusChange(troop, event.target.value as TroopStatus)
                     }
                     className="rounded-full border border-ink/20 bg-white px-2 py-1 text-xs"
+                    disabled={isLocked}
                   >
                     {STATUS_OPTIONS.map((option) => (
                       <option key={option} value={option}>
@@ -93,7 +99,8 @@ export function TroopTable() {
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={() => handleMissionSuccess(troop)}
-                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20"
+                      disabled={isLocked}
+                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
                       title="Mark successful mission"
                     >
                       Mission Success
