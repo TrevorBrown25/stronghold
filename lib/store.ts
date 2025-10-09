@@ -175,7 +175,11 @@ export const useStrongholdStore = create<StrongholdState>()(
       (set, get) => ({
         turn: 1,
         activePhase: PHASES[0],
-        resources: { ...STARTING_RESOURCES },
+        resources: {
+          wealth: 2,
+          supplies: 2,
+          loyalty: 1
+        },
         festivalUsed: false,
         edict: undefined,
         edictTurn: undefined,
@@ -553,7 +557,11 @@ export const useStrongholdStore = create<StrongholdState>()(
           set({
             turn: 1,
             activePhase: PHASES[0],
-            resources: { ...STARTING_RESOURCES },
+            resources: {
+              wealth: 2,
+              supplies: 2,
+              loyalty: 1
+            },
             festivalUsed: false,
             edict: undefined,
             edictTurn: undefined,

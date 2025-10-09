@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { selectors, useStrongholdStore } from "@/lib/store";
 import type { Mission, MissionCategory, MissionScale, Troop } from "@/lib/types";
 
@@ -34,8 +35,10 @@ export function MissionsPanel() {
     modifier: 0
   });
   const [message, setMessage] = useState<string | null>(null);
+  const isLocked = useEditLockStore(selectIsLocked);
 
   const handleCreate = () => {
+    if (isLocked) return;
     if (!form.name) {
       setMessage("Give the mission a name.");
       return;
@@ -63,13 +66,20 @@ export function MissionsPanel() {
   };
 
   const handleRoll = (mission: Mission) => {
+    if (isLocked) return;
     resolveMissionRoll(mission.id, mission.modifier);
     setMessage(`Rolled mission ${mission.name}.`);
   };
 
-  const handleRemove = (mission: Mission) => {
-    deleteMission(mission.id);
-    setMessage(`${mission.name} removed from the roster.`);
+  const handleReroll = (mission: Mission) => {
+    if (isLocked) return;
+    const spent = spendIntel();
+    if (!spent) {
+      setMessage("No intel available to reroll.");
+      return;
+    }
+    resolveMissionRoll(mission.id, mission.modifier);
+    setMessage(`Intel spent to reroll ${mission.name}.`);
   };
 
   const assignedTroops = (mission: Mission) =>
@@ -96,6 +106,7 @@ export function MissionsPanel() {
               value={form.name}
               onChange={(event) => setForm({ ...form, name: event.target.value })}
               className="rounded-full border border-ink/20 bg-white px-3 py-2"
+              readOnly={isLocked}
             />
           </div>
           <div className="flex flex-col gap-1 text-sm">
@@ -106,6 +117,7 @@ export function MissionsPanel() {
                 setForm({ ...form, category: event.target.value as MissionCategory })
               }
               className="rounded-full border border-ink/20 bg-white px-3 py-2"
+              disabled={isLocked}
             >
               {missionCategories.map((category) => (
                 <option key={category} value={category}>
@@ -122,6 +134,7 @@ export function MissionsPanel() {
                 setForm({ ...form, scale: event.target.value as MissionScale })
               }
               className="rounded-full border border-ink/20 bg-white px-3 py-2"
+              disabled={isLocked}
             >
               {missionScales.map((scale) => (
                 <option key={scale} value={scale}>
@@ -139,6 +152,7 @@ export function MissionsPanel() {
                 setForm({ ...form, modifier: Number(event.target.value) })
               }
               className="rounded-full border border-ink/20 bg-white px-3 py-2"
+              readOnly={isLocked}
             />
           </div>
           <div className="flex-1 text-sm">
@@ -150,11 +164,13 @@ export function MissionsPanel() {
               }
               rows={2}
               className="w-full rounded-2xl border border-ink/20 bg-white px-3 py-2"
+              readOnly={isLocked}
             />
           </div>
           <button
             onClick={handleCreate}
-            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark"
+            disabled={isLocked}
+            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
           >
             Create Mission
           </button>
@@ -199,17 +215,27 @@ export function MissionsPanel() {
                       updateMission(mission.id, { modifier: Number(event.target.value) })
                     }
                     className="w-24 rounded-full border border-ink/20 bg-white px-3 py-1 text-right"
+                    readOnly={isLocked}
                   />
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleRoll(mission)}
-                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20"
+                      disabled={isLocked}
+                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       Roll Mission
                     </button>
                     <button
-                      onClick={() => handleRemove(mission)}
-                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
+                      onClick={() => handleReroll(mission)}
+                      disabled={isLocked}
+                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      Spend Intel ({resources.intel})
+                    </button>
+                    <button
+                      onClick={() => deleteMission(mission.id)}
+                      disabled={isLocked}
+                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       Remove
                     </button>
@@ -228,8 +254,12 @@ export function MissionsPanel() {
                       return (
                         <button
                           key={captainOption.id}
-                          onClick={() => toggleCaptainAssignment(mission.id, captainOption.id)}
-                          className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                          onClick={() => {
+                            if (isLocked) return;
+                            toggleCaptainAssignment(mission.id, captainOption.id);
+                          }}
+                          disabled={isLocked}
+                          className={`rounded-full px-3 py-1 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
                             isAssigned
                               ? "bg-accent text-white"
                               : "bg-ink/10 hover:bg-ink/20"
@@ -255,8 +285,12 @@ export function MissionsPanel() {
                       return (
                         <button
                           key={troop.id}
-                          onClick={() => toggleTroopAssignment(mission.id, troop.id)}
-                          className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                          onClick={() => {
+                            if (isLocked) return;
+                            toggleTroopAssignment(mission.id, troop.id);
+                          }}
+                          disabled={isLocked}
+                          className={`rounded-full px-3 py-1 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
                             isAssigned ? "bg-accent text-white" : "bg-ink/10 hover:bg-ink/20"
                           }`}
                           title={`Status: ${troop.status}`}
@@ -288,6 +322,7 @@ export function MissionsPanel() {
                   }
                   rows={2}
                   className="mt-1 w-full rounded-2xl border border-ink/20 bg-white px-3 py-2 text-sm"
+                  readOnly={isLocked}
                 />
               </div>
             </div>

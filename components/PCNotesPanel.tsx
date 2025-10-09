@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { useStrongholdStore } from "@/lib/store";
 
 export function PCNotesPanel() {
@@ -9,8 +10,10 @@ export function PCNotesPanel() {
   const addNote = useStrongholdStore((state) => state.addNote);
   const [player, setPlayer] = useState("");
   const [details, setDetails] = useState("");
+  const isLocked = useEditLockStore(selectIsLocked);
 
   const handleAdd = () => {
+    if (isLocked) return;
     if (!player || !details) return;
     addNote({ player, details });
     setPlayer("");
@@ -30,6 +33,7 @@ export function PCNotesPanel() {
             onChange={(event) => setPlayer(event.target.value)}
             className="flex-1 rounded-full border border-ink/20 bg-white px-3 py-2 text-sm"
             placeholder="Player or PC name"
+            readOnly={isLocked}
           />
           <textarea
             value={details}
@@ -37,10 +41,12 @@ export function PCNotesPanel() {
             className="flex-1 rounded-2xl border border-ink/20 bg-white px-3 py-2 text-sm"
             placeholder="Action notes"
             rows={2}
+            readOnly={isLocked}
           />
           <button
             onClick={handleAdd}
-            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark"
+            disabled={isLocked}
+            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
           >
             Add Action
           </button>
