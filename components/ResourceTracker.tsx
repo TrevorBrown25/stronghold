@@ -74,20 +74,6 @@ export function ResourceTracker() {
         >
           Festival
         </button>
-        <button
-          onClick={() => addIntel()}
-          disabled={isLocked}
-          className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          Gain Intel
-        </button>
-        <button
-          onClick={() => spendIntel()}
-          disabled={isLocked}
-          className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          Spend Intel
-        </button>
       </div>
     </section>
   );
