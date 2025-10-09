@@ -24,8 +24,6 @@ export function MissionsPanel() {
   const deleteMission = useStrongholdStore((state) => state.deleteMission);
   const toggleCaptainAssignment = useStrongholdStore((state) => state.toggleCaptainAssignment);
   const toggleTroopAssignment = useStrongholdStore((state) => state.toggleTroopAssignment);
-  const spendIntel = useStrongholdStore((state) => state.spendIntel);
-  const resources = useStrongholdStore((state) => state.resources);
   const captains = useStrongholdStore(selectors.availableCaptains);
   const troops = useStrongholdStore(selectors.availableTroops);
 

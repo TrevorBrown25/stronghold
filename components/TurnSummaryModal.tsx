@@ -32,7 +32,6 @@ export function TurnSummaryModal({ open, onClose, onConfirm }: TurnSummaryModalP
               <li>Wealth: {resources.wealth}</li>
               <li>Supplies: {resources.supplies}</li>
               <li>Loyalty: {resources.loyalty}</li>
-              <li>Intel: {resources.intel}</li>
             </ul>
           </SummaryCard>
           <SummaryCard title="Missions">

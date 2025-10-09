@@ -6,34 +6,24 @@ import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { selectors, useStrongholdStore } from "@/lib/store";
 import type { ResourceType } from "@/lib/types";
 
-const RESOURCE_LABELS: Record<ResourceType | "intel", string> = {
+const RESOURCE_LABELS: Record<ResourceType, string> = {
   wealth: "Wealth",
   supplies: "Supplies",
-  loyalty: "Loyalty",
-  intel: "Intel"
+  loyalty: "Loyalty"
 };
+
+const RESOURCE_KEYS: ResourceType[] = ["wealth", "supplies", "loyalty"];
 
 export function ResourceTracker() {
   const resources = useStrongholdStore((state) => state.resources);
   const incrementResource = useStrongholdStore((state) => state.incrementResource);
-  const addIntel = useStrongholdStore((state) => state.addIntel);
-  const spendIntel = useStrongholdStore((state) => state.spendIntel);
   const runFestival = useStrongholdStore((state) => state.runFestival);
+  const festivalUsed = useStrongholdStore((state) => state.festivalUsed);
   const { used, capacity } = useStrongholdStore(selectors.workOrderSummary);
   const { active, capacity: trainingCap } = useStrongholdStore(selectors.trainingSummary);
   const isLocked = useEditLockStore(selectIsLocked);
 
-  const canFestival = useMemo(
-    () => !resources.festivalUsed,
-    [resources.festivalUsed]
-  );
-
-  const resourceKeys: (ResourceType | "intel")[] = [
-    "wealth",
-    "supplies",
-    "loyalty",
-    "intel"
-  ];
+  const canFestival = useMemo(() => !festivalUsed, [festivalUsed]);
 
   return (
     <section className="flex flex-col gap-4 rounded-3xl bg-white/70 p-4 shadow-lg">
@@ -48,8 +38,8 @@ export function ResourceTracker() {
           </span>
         </div>
       </header>
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {resourceKeys.map((key) => (
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+        {RESOURCE_KEYS.map((key) => (
           <div key={key} className="flex flex-col gap-2 rounded-2xl bg-white/60 p-3">
             <div className="flex items-center justify-between text-sm font-semibold">
               <span>{RESOURCE_LABELS[key]}</span>
