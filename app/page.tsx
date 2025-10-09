@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { CaptainsPanel } from "@/components/CaptainsPanel";
 import { EditLockBanner } from "@/components/EditLockBanner";
@@ -14,6 +14,7 @@ import { RecruitmentPanel } from "@/components/RecruitmentPanel";
 import { ResourceTracker } from "@/components/ResourceTracker";
 import { TroopTable } from "@/components/TroopTable";
 import { TurnSummaryModal } from "@/components/TurnSummaryModal";
+import { ResetConfirmationModal } from "@/components/ResetConfirmationModal";
 import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { useStrongholdStore } from "@/lib/store";
 
@@ -24,18 +25,23 @@ export default function Home() {
   const exportState = useStrongholdStore((state) => state.exportState);
   const resetCampaign = useStrongholdStore((state) => state.resetCampaign);
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const isLocked = useEditLockStore(selectIsLocked);
 
   const handleEndTurn = () => {
     if (isLocked) return;
     setSummaryOpen(true);
-  };
+  }, []);
 
-  const handleConfirmTurn = () => {
+  const handleCloseSummary = useCallback(() => {
+    setSummaryOpen(false);
+  }, []);
+
+  const handleConfirmTurn = useCallback(() => {
     if (isLocked) return;
     completeTurn();
     setSummaryOpen(false);
-  };
+  }, [completeTurn]);
 
   const handleExport = () => {
     if (isLocked) return;
@@ -49,14 +55,22 @@ export default function Home() {
     URL.revokeObjectURL(url);
   };
 
+  const handleOpenResetConfirm = useCallback(() => {
+    setResetConfirmOpen(true);
+  }, []);
+
+  const handleCloseResetConfirm = useCallback(() => {
+    setResetConfirmOpen(false);
+  }, []);
+
+  const handleConfirmReset = useCallback(() => {
+    resetCampaign();
+    setResetConfirmOpen(false);
+  }, [resetCampaign]);
+
   const handleNextPhase = () => {
     if (isLocked) return;
     nextPhase();
-  };
-
-  const handleReset = () => {
-    if (isLocked) return;
-    resetCampaign();
   };
 
   const renderPhaseContent = () => {
@@ -104,7 +118,7 @@ export default function Home() {
               Export JSON
             </button>
             <button
-              onClick={handleReset}
+              onClick={handleOpenResetConfirm}
               disabled={isLocked}
               className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
             >
@@ -115,8 +129,13 @@ export default function Home() {
       </div>
       <TurnSummaryModal
         open={summaryOpen}
-        onClose={() => setSummaryOpen(false)}
+        onClose={handleCloseSummary}
         onConfirm={handleConfirmTurn}
+      />
+      <ResetConfirmationModal
+        open={resetConfirmOpen}
+        onCancel={handleCloseResetConfirm}
+        onConfirm={handleConfirmReset}
       />
     </main>
   );
