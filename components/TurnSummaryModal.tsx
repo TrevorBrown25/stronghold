@@ -24,7 +24,7 @@ export function TurnSummaryModal({ open, onClose, onConfirm }: TurnSummaryModalP
       <div className="w-full max-w-3xl rounded-3xl bg-parchment p-6 shadow-2xl">
         <h2 className="font-display text-3xl">Turn Summary</h2>
         <p className="text-sm text-ink/70">
-          Review the turn's highlights before advancing the calendar.
+          Review the turn&rsquo;s highlights before advancing the calendar.
         </p>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <SummaryCard title="Resources">

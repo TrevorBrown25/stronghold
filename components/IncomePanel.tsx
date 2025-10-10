@@ -33,7 +33,7 @@ export function IncomePanel() {
       <header>
         <h2 className="font-display text-2xl">Income &amp; Edict</h2>
         <p className="text-sm text-ink/70">
-          Choose the realm's focus this turn to adjust your resources.
+          Choose the realm&rsquo;s focus this turn to adjust your resources.
         </p>
       </header>
       <div className="grid gap-2 md:grid-cols-2">
