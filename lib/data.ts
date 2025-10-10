@@ -15,7 +15,7 @@ export const projectCatalog: ProjectTemplate[] = [
     tier: "standard",
     cost: { wealth: 1, supplies: 1 },
     turnsRequired: 2,
-    effects: "Recruit regular troops, military missions"
+    effects: "Recruit regular troops, military missions, recruitment edict"
   },
   {
     id: "armory",
