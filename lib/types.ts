@@ -1,5 +1,11 @@
 export type ResourceType = "wealth" | "supplies" | "loyalty";
 
+export const RESOURCE_TYPES: ResourceType[] = [
+  "wealth",
+  "supplies",
+  "loyalty"
+];
+
 export type ProjectTier = "standard" | "advanced" | "wonder";
 
 export interface ProjectTemplate {
