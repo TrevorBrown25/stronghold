@@ -259,7 +259,7 @@ export function MissionsPanel() {
                 <div className="rounded-2xl bg-white/50 p-3">
                   <h4 className="text-sm font-semibold">Troops</h4>
                   <p className="text-xs text-ink/70">
-                    Select which units participate. Successes build veterancy.
+                    Select which units participate. Successes increase mission experience.
                   </p>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {troops.map((troop) => {
