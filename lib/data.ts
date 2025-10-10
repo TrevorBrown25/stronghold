@@ -118,18 +118,81 @@ export const projectCatalog: ProjectTemplate[] = [
     id: "grand-barracks",
     name: "Grand Barracks",
     tier: "advanced",
-    cost: { wealth: 1, supplies: 2 },
+    cost: { wealth: 2, supplies: 2 },
     turnsRequired: 3,
-    effects: "+1 Training Capacity"
+    effects: "Recruit elite troops, unlocks advanced military missions"
   },
-  // Wonder projects
+  {
+    id: "armorers-hall",
+    name: "Armorer's Hall",
+    tier: "advanced",
+    cost: { supplies: 2, wealth: 1 },
+    turnsRequired: 3,
+    effects: "Craft +2 armor"
+  },
+  {
+    id: "master-forge",
+    name: "Master Forge",
+    tier: "advanced",
+    cost: { wealth: 2, supplies: 2 },
+    turnsRequired: 3,
+    effects: "Craft +2 weapons"
+  },
+  {
+    id: "guildhall",
+    name: "Guildhall",
+    tier: "advanced",
+    cost: { wealth: 3 },
+    turnsRequired: 3,
+    effects: "Market upgrade, unlocks advanced trade missions"
+  },
+  {
+    id: "mage-tower",
+    name: "Mage Tower",
+    tier: "advanced",
+    cost: { wealth: 2, loyalty: 1 },
+    turnsRequired: 3,
+    effects: "Recruit mages"
+  },
+  {
+    id: "archery-academy",
+    name: "Archery Academy",
+    tier: "advanced",
+    cost: { supplies: 2, wealth: 1 },
+    turnsRequired: 3,
+    effects: "Recruit archers"
+  },
+  {
+    id: "diplomatic-embassy",
+    name: "Diplomatic Embassy",
+    tier: "advanced",
+    cost: { loyalty: 2, wealth: 1 },
+    turnsRequired: 3,
+    effects: "Upgrade Rebel Court, unlocks advanced diplomacy missions"
+  },
+  {
+    id: "spy-academy",
+    name: "Spy Academy",
+    tier: "advanced",
+    cost: { wealth: 2, supplies: 1 },
+    turnsRequired: 3,
+    effects: "Upgrade Safehouse, +2 counter-intel, unlocks advanced spy missions"
+  },
+  {
+    id: "hidden-grove",
+    name: "Hidden Grove",
+    tier: "advanced",
+    cost: { supplies: 2, loyalty: 1 },
+    turnsRequired: 3,
+    effects: "Upgrade Watchtowers, +2 scout rolls"
+  },
   {
     id: "war-council",
     name: "War Council",
-    tier: "wonder",
-    cost: { wealth: 3, supplies: 2, loyalty: 1 },
-    turnsRequired: 4,
-    effects: "+1 Work Order capacity, +1 to all mission rolls"
+    tier: "advanced",
+    cost: { loyalty: 3 },
+    turnsRequired: 3,
+    effects: "Recruit unique elite troops"
   }
 ];
 
