@@ -142,7 +142,9 @@ function workOrderCapacity(projects: ProjectInstance[]): number {
   if (projects.some((p) => p.id.includes("guildhall") && p.completedTurn)) {
     capacity += 1;
   }
-  if (projects.some((p) => p.id.includes("captains-quarters") && p.completedTurn)) {
+  if (
+    projects.some((p) => p.id.includes("captains-quarters-upgrade") && p.completedTurn)
+  ) {
     capacity += 1;
   }
   if (projects.some((p) => p.id.includes("war-council") && p.completedTurn)) {
