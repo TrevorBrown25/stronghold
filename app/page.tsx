@@ -104,7 +104,9 @@ export default function Home() {
           {activePhase !== "Dashboard" && <ResourceTracker />}
           {renderPhaseContent()}
           {activePhase === "Missions" && <CaptainsPanel />}
-          <TroopTable />
+          {(activePhase === "Recruitment" || activePhase === "Missions") && (
+            <TroopTable />
+          )}
           {!isLocked && (
             <div className="glass-panel flex flex-wrap items-center gap-3">
               <button
