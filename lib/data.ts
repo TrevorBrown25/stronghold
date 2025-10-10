@@ -8,6 +8,96 @@ import {
 } from "./types";
 
 export const projectCatalog: ProjectTemplate[] = [
+  // Standard projects
+  {
+    id: "barracks",
+    name: "Barracks",
+    tier: "standard",
+    cost: { wealth: 1, supplies: 1 },
+    turnsRequired: 2,
+    effects: "Recruit regular troops, military missions"
+  },
+  {
+    id: "armory",
+    name: "Armory",
+    tier: "standard",
+    cost: { supplies: 2 },
+    turnsRequired: 2,
+    effects: "Craft +1 armor"
+  },
+  {
+    id: "blacksmith",
+    name: "Blacksmith",
+    tier: "standard",
+    cost: { wealth: 1, supplies: 1 },
+    turnsRequired: 2,
+    effects: "Craft +1 weapons"
+  },
+  {
+    id: "market",
+    name: "Market",
+    tier: "standard",
+    cost: { wealth: 2 },
+    turnsRequired: 2,
+    effects: "Enables trade missions, Wealth Edict"
+  },
+  {
+    id: "granary",
+    name: "Granary",
+    tier: "standard",
+    cost: { supplies: 2 },
+    turnsRequired: 2,
+    effects: "Unlocks Supplies Edict"
+  },
+  {
+    id: "watchtowers",
+    name: "Watchtowers",
+    tier: "standard",
+    cost: { wealth: 1, supplies: 1 },
+    turnsRequired: 2,
+    effects: "Scout missions, recruit scouts"
+  },
+  {
+    id: "shrine",
+    name: "Shrine",
+    tier: "standard",
+    cost: { wealth: 1, loyalty: 1 },
+    turnsRequired: 2,
+    effects: "Unlocks Loyalty Edict"
+  },
+  {
+    id: "tavern-square",
+    name: "Tavern Square",
+    tier: "standard",
+    cost: { supplies: 1, loyalty: 1 },
+    turnsRequired: 2,
+    effects: "Enables festivals"
+  },
+  {
+    id: "captains-quarters",
+    name: "Captain's Quarters",
+    tier: "standard",
+    cost: { supplies: 2 },
+    turnsRequired: 2,
+    effects: "Add captains to missions & events"
+  },
+  {
+    id: "safehouse",
+    name: "Safehouse",
+    tier: "standard",
+    cost: { wealth: 2 },
+    turnsRequired: 2,
+    effects: "Spy missions, recruit spies"
+  },
+  {
+    id: "rebel-court",
+    name: "Rebel Court",
+    tier: "standard",
+    cost: { loyalty: 2 },
+    turnsRequired: 2,
+    effects: "Diplomacy missions"
+  },
+  // Advanced projects
   {
     id: "guildhall",
     name: "Guildhall",
@@ -17,36 +107,12 @@ export const projectCatalog: ProjectTemplate[] = [
     effects: "+1 Work Order capacity, unlocks artisan contracts"
   },
   {
-    id: "captains-quarters",
-    name: "Captain's Quarters",
+    id: "captains-quarters-upgrade",
+    name: "Captain's Quarters Upgrade",
     tier: "advanced",
     cost: { wealth: 1, supplies: 2 },
     turnsRequired: 2,
     effects: "+1 Work Order capacity, improves captain morale"
-  },
-  {
-    id: "war-council",
-    name: "War Council",
-    tier: "wonder",
-    cost: { wealth: 3, supplies: 2, loyalty: 1 },
-    turnsRequired: 4,
-    effects: "+1 Work Order capacity, +1 to all mission rolls"
-  },
-  {
-    id: "town-market",
-    name: "Town Market",
-    tier: "standard",
-    cost: { wealth: 1 },
-    turnsRequired: 2,
-    effects: "+1 Wealth during Income phase"
-  },
-  {
-    id: "barracks",
-    name: "Barracks",
-    tier: "standard",
-    cost: { supplies: 1 },
-    turnsRequired: 2,
-    effects: "+1 Training Capacity"
   },
   {
     id: "grand-barracks",
@@ -55,6 +121,15 @@ export const projectCatalog: ProjectTemplate[] = [
     cost: { wealth: 1, supplies: 2 },
     turnsRequired: 3,
     effects: "+1 Training Capacity"
+  },
+  // Wonder projects
+  {
+    id: "war-council",
+    name: "War Council",
+    tier: "wonder",
+    cost: { wealth: 3, supplies: 2, loyalty: 1 },
+    turnsRequired: 4,
+    effects: "+1 Work Order capacity, +1 to all mission rolls"
   }
 ];
 
