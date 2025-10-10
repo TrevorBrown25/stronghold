@@ -41,7 +41,7 @@ export function TroopTable() {
         <div>
           <h2 className="font-display text-2xl">Troops</h2>
           <p className="text-sm text-ink/70">
-            Track unit status, veterancy, and casualties.
+            Track unit status and mission history.
           </p>
         </div>
         <div className="flex items-center gap-2 text-sm">

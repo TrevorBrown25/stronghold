@@ -478,10 +478,7 @@ export const useStrongholdStore = create<StrongholdState>()(
                 0,
                 troop.missionsCompleted + deltaMission
               );
-              let nextStatus = status;
-              if (missionsCompleted >= 2 && status !== "destroyed") {
-                nextStatus = "veteran";
-              }
+              const nextStatus = status;
               return {
                 ...troop,
                 status: nextStatus,
