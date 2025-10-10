@@ -247,6 +247,18 @@ export const useStrongholdStore = create<StrongholdState>()(
               return { income };
             }
             const adjustments = INCOME_EFFECTS[income] ?? {};
+            const cost: Partial<Record<ResourceType, number>> = {};
+            for (const [resource, value] of Object.entries(adjustments) as [
+              ResourceType,
+              number
+            ][]) {
+              if (value < 0) {
+                cost[resource] = Math.abs(value);
+              }
+            }
+            if (!canAfford(state.resources, cost)) {
+              return {};
+            }
             const adjusted = { ...state.resources };
             for (const [key, value] of Object.entries(adjustments) as [
               ResourceType,
