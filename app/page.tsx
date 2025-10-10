@@ -13,6 +13,7 @@ import { PhaseSidebar } from "@/components/PhaseSidebar";
 import { ProjectsPanel } from "@/components/ProjectsPanel";
 import { RecruitmentPanel } from "@/components/RecruitmentPanel";
 import { ResourceTracker } from "@/components/ResourceTracker";
+import { ResourceOverview } from "@/components/ResourceOverview";
 import { TroopTable } from "@/components/TroopTable";
 import { TurnSummaryModal } from "@/components/TurnSummaryModal";
 import { ResetConfirmationModal } from "@/components/ResetConfirmationModal";
@@ -101,7 +102,11 @@ export default function Home() {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 lg:flex-row">
         <PhaseSidebar onCompleteTurn={handleEndTurn} />
         <div className="flex flex-1 flex-col gap-6">
-          {activePhase !== "Dashboard" && <ResourceTracker />}
+          {activePhase === "Income & Edict" ? (
+            <ResourceTracker />
+          ) : activePhase !== "Dashboard" ? (
+            <ResourceOverview />
+          ) : null}
           {renderPhaseContent()}
           {activePhase === "Missions" && <CaptainsPanel />}
           {(activePhase === "Recruitment" || activePhase === "Missions") && (
