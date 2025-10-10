@@ -28,10 +28,10 @@ export default function Home() {
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const isLocked = useEditLockStore(selectIsLocked);
 
-  const handleEndTurn = () => {
+  const handleEndTurn = useCallback(() => {
     if (isLocked) return;
     setSummaryOpen(true);
-  }, []);
+  }, [isLocked]);
 
   const handleCloseSummary = useCallback(() => {
     setSummaryOpen(false);
