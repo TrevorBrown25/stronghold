@@ -15,25 +15,27 @@ export function PhaseSidebar({ onCompleteTurn }: Props) {
   const isLocked = useEditLockStore(selectIsLocked);
 
   return (
-    <aside className="glass-panel flex w-64 flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h2 className="font-display text-2xl text-slate-100">Turn {turn}</h2>
+    <aside className="glass-panel flex w-full flex-col gap-4 lg:w-64">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="font-display text-2xl text-slate-100 text-center sm:text-left">
+          Turn {turn}
+        </h2>
         <button
           disabled={isLocked}
           onClick={onCompleteTurn}
-          className="rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-3 py-1 text-sm font-semibold text-white shadow-[0_10px_30px_-15px_rgba(76,29,149,0.8)] transition hover:from-indigo-400 hover:to-purple-400 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-3 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_-15px_rgba(76,29,149,0.8)] transition hover:from-indigo-400 hover:to-purple-400 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
         >
           End Turn
         </button>
       </div>
-      <nav className="flex flex-col gap-2">
+      <nav className="grid gap-2 sm:flex sm:flex-col">
         {PHASES.map((phase) => (
           <button
             key={phase}
             disabled={isLocked}
             onClick={() => setPhase(phase)}
             className={clsx(
-              "rounded-xl border px-4 py-3 text-left font-semibold transition",
+              "w-full rounded-xl border px-4 py-3 text-left font-semibold transition",
               activePhase === phase
                 ? "border-indigo-400/70 bg-indigo-500/20 text-white shadow-[0_18px_35px_-20px_rgba(79,70,229,0.9)]"
                 : "border-white/10 bg-slate-900/40 text-slate-300 hover:border-indigo-400/60 hover:bg-slate-900/60 hover:text-white",
