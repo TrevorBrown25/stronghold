@@ -105,29 +105,31 @@ export default function Home() {
           {renderPhaseContent()}
           {activePhase === "Missions" && <CaptainsPanel />}
           <TroopTable />
-          <div className="flex flex-wrap items-center gap-3 rounded-3xl bg-white/70 p-4 shadow-lg">
-            <button
-              onClick={handleNextPhase}
-              disabled={isLocked}
-              className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
-            >
-              Next Phase
-            </button>
-            <button
-              onClick={handleExport}
-              disabled={isLocked}
-              className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              Export JSON
-            </button>
-            <button
-              onClick={handleOpenResetConfirm}
-              disabled={isLocked}
-              className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              Reset Campaign
-            </button>
-          </div>
+          {!isLocked && (
+            <div className="flex flex-wrap items-center gap-3 rounded-3xl bg-white/70 p-4 shadow-lg">
+              <button
+                onClick={handleNextPhase}
+                disabled={isLocked}
+                className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
+              >
+                Next Phase
+              </button>
+              <button
+                onClick={handleExport}
+                disabled={isLocked}
+                className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Export JSON
+              </button>
+              <button
+                onClick={handleOpenResetConfirm}
+                disabled={isLocked}
+                className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Reset Campaign
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <TurnSummaryModal
