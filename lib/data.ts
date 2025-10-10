@@ -193,6 +193,31 @@ export const projectCatalog: ProjectTemplate[] = [
     cost: { loyalty: 3 },
     turnsRequired: 3,
     effects: "Recruit unique elite troops"
+  },
+  // Wonder projects
+  {
+    id: "skyport",
+    name: "Skyport",
+    tier: "wonder",
+    cost: { supplies: 3, wealth: 2, loyalty: 1 },
+    turnsRequired: 6,
+    effects: "Enables skyborne missions"
+  },
+  {
+    id: "grand-cathedral",
+    name: "Grand Cathedral",
+    tier: "wonder",
+    cost: { supplies: 1, wealth: 2, loyalty: 3 },
+    turnsRequired: 6,
+    effects: "Enables skyborne missions"
+  },
+  {
+    id: "forge-of-spells",
+    name: "Forge of Spells Restoration",
+    tier: "wonder",
+    cost: { supplies: 3, wealth: 3 },
+    turnsRequired: 6,
+    effects: "Unknown"
   }
 ];
 
@@ -238,18 +263,6 @@ export const captainRoster: Captain[] = [
     traits: ["Spy +3"]
   },
   {
-    id: "molly",
-    name: "Molly",
-    specialty: "Mages ignore weaknesses",
-    traits: ["Mages ignore weaknesses"]
-  },
-  {
-    id: "gundren",
-    name: "Gundren",
-    specialty: "+3 to defensive missions",
-    traits: ["Defense +3"]
-  },
-  {
     id: "tricky",
     name: "Tricky",
     specialty: "Advantage on Diplomacy & Trade",
@@ -260,74 +273,11 @@ export const captainRoster: Captain[] = [
 export const troopRoster: Troop[] = [
   {
     id: uuid(),
-    name: "Infantry",
-    tier: "regular",
-    type: "Infantry",
+    name: "Militia",
+    tier: "militia",
+    type: "Militia",
     status: "active",
-    advantages: "Defense",
-    missionsCompleted: 0
-  },
-  {
-    id: uuid(),
-    name: "Shield Bearers",
-    tier: "regular",
-    type: "Shield",
-    status: "active",
-    advantages: "Hold the line",
-    missionsCompleted: 0
-  },
-  {
-    id: uuid(),
-    name: "Cavalry",
-    tier: "regular",
-    type: "Cavalry",
-    status: "active",
-    advantages: "Flanking",
-    missionsCompleted: 0
-  },
-  {
-    id: uuid(),
-    name: "Archers",
-    tier: "regular",
-    type: "Archers",
-    status: "active",
-    advantages: "Ranged support",
-    missionsCompleted: 0
-  },
-  {
-    id: uuid(),
-    name: "Mages",
-    tier: "regular",
-    type: "Mages",
-    status: "active",
-    advantages: "Arcane bombardment",
-    missionsCompleted: 0
-  },
-  {
-    id: uuid(),
-    name: "Scouts",
-    tier: "regular",
-    type: "Scouts",
-    status: "active",
-    advantages: "Reconnaissance",
-    missionsCompleted: 0
-  },
-  {
-    id: uuid(),
-    name: "Spellknights",
-    tier: "elite",
-    type: "Spellknights",
-    status: "active",
-    advantages: "Magical cavalry",
-    missionsCompleted: 0
-  },
-  {
-    id: uuid(),
-    name: "Shadowblades",
-    tier: "unique",
-    type: "Shadowblades",
-    status: "active",
-    advantages: "Sabotage, stealth",
+    advantages: "None",
     missionsCompleted: 0
   }
 ];
