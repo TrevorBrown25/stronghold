@@ -96,7 +96,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-parchment p-6">
+    <main className="min-h-screen p-6 text-slate-100">
       <EditLockBanner />
       <div className="mx-auto flex max-w-7xl gap-6">
         <PhaseSidebar onCompleteTurn={handleEndTurn} />
@@ -106,25 +106,25 @@ export default function Home() {
           {activePhase === "Missions" && <CaptainsPanel />}
           <TroopTable />
           {!isLocked && (
-            <div className="flex flex-wrap items-center gap-3 rounded-3xl bg-white/70 p-4 shadow-lg">
+            <div className="glass-panel flex flex-wrap items-center gap-3">
               <button
                 onClick={handleNextPhase}
                 disabled={isLocked}
-                className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
+                className="rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-teal-400 px-5 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_-15px_rgba(14,116,144,0.8)] transition hover:from-indigo-400 hover:via-blue-400 hover:to-teal-300 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Next Phase
               </button>
               <button
                 onClick={handleExport}
                 disabled={isLocked}
-                className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-full border border-white/10 bg-slate-800/60 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-indigo-400 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Export JSON
               </button>
               <button
                 onClick={handleOpenResetConfirm}
                 disabled={isLocked}
-                className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-full border border-rose-500/30 bg-rose-500/10 px-4 py-2 text-sm font-semibold text-rose-300 transition hover:border-rose-400 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Reset Campaign
               </button>

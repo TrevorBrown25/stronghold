@@ -21,24 +21,24 @@ export function PCNotesPanel() {
   };
 
   return (
-    <section className="flex flex-col gap-3 rounded-3xl bg-white/70 p-4 shadow-lg">
+    <section className="glass-panel flex flex-col gap-3">
       <header>
-        <h2 className="font-display text-2xl">PC Actions</h2>
-        <p className="text-sm text-ink/70">Log what the party tackles this turn.</p>
+        <h2 className="font-display text-2xl text-slate-100">PC Actions</h2>
+        <p className="text-sm text-slate-400">Log what the party tackles this turn.</p>
       </header>
-      <div className="flex flex-col gap-2 rounded-2xl bg-white/60 p-3">
+      <div className="glass-section flex flex-col gap-2">
         <div className="flex flex-col gap-2 md:flex-row md:items-center">
           <input
             value={player}
             onChange={(event) => setPlayer(event.target.value)}
-            className="flex-1 rounded-full border border-ink/20 bg-white px-3 py-2 text-sm"
+            className="input-field flex-1 rounded-full"
             placeholder="Player or PC name"
             readOnly={isLocked}
           />
           <textarea
             value={details}
             onChange={(event) => setDetails(event.target.value)}
-            className="flex-1 rounded-2xl border border-ink/20 bg-white px-3 py-2 text-sm"
+            className="input-field flex-1"
             placeholder="Action notes"
             rows={2}
             readOnly={isLocked}
@@ -46,7 +46,7 @@ export function PCNotesPanel() {
           <button
             onClick={handleAdd}
             disabled={isLocked}
-            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
+            className="rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-teal-400 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_35px_-18px_rgba(79,70,229,0.8)] transition hover:from-indigo-400 hover:via-blue-400 hover:to-teal-300 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Add Action
           </button>
@@ -57,14 +57,14 @@ export function PCNotesPanel() {
           .slice()
           .reverse()
           .map((note) => (
-            <div key={note.id} className="rounded-2xl bg-white/60 p-3 text-sm">
-              <p className="font-semibold">{note.player}</p>
-              <p className="text-xs text-ink/70">Turn {note.turn}</p>
-              <p>{note.details}</p>
+            <div key={note.id} className="glass-section text-sm">
+              <p className="font-semibold text-white">{note.player}</p>
+              <p className="text-xs text-slate-500">Turn {note.turn}</p>
+              <p className="text-slate-200">{note.details}</p>
             </div>
           ))}
         {notes.length === 0 && (
-          <p className="rounded-2xl bg-white/60 p-3 text-sm text-ink/70">
+          <p className="glass-section text-sm text-slate-400">
             Record downtime actions, negotiations, or stronghold scenes here.
           </p>
         )}
