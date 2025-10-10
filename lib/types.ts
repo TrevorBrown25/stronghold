@@ -57,7 +57,7 @@ export interface Captain {
   traits?: string[];
 }
 
-export type TroopStatus = "active" | "veteran" | "exhausted" | "destroyed";
+export type TroopStatus = "active" | "deployed";
 
 export interface Troop {
   id: string;
