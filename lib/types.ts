@@ -6,6 +6,12 @@ export const RESOURCE_TYPES: ResourceType[] = [
   "loyalty"
 ];
 
+export type IncomeType =
+  | "Collect Taxes"
+  | "Trade Commodities"
+  | "Purchase Reserves"
+  | "Supply Expedition";
+
 export type ProjectTier = "standard" | "advanced" | "wonder";
 
 export interface ProjectTemplate {

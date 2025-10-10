@@ -13,6 +13,7 @@ import {
 import type {
   Captain,
   EventEntry,
+  IncomeType,
   Mission,
   NoteEntry,
   ProjectInstance,
@@ -47,6 +48,8 @@ interface StrongholdState {
   activePhase: PhaseKey;
   resources: Record<ResourceType, number>;
   festivalUsed: boolean;
+  income?: IncomeType;
+  incomeTurn?: number;
   edict?: "Harvest" | "Trade" | "Town Hall" | "Draft";
   edictTurn?: number;
   projects: ProjectInstance[];
@@ -58,6 +61,7 @@ interface StrongholdState {
   notes: NoteEntry[];
   turnHistory: string[];
   incrementResource: (resource: ResourceType, delta: number) => void;
+  applyIncome: (income: StrongholdState["income"]) => void;
   applyEdict: (edict: StrongholdState["edict"]) => void;
   runFestival: () => boolean;
   startProject: (template: ProjectTemplate) => void;
@@ -101,6 +105,13 @@ const STARTING_RESOURCES: Record<ResourceType, number> = {
   wealth: 2,
   supplies: 2,
   loyalty: 1
+};
+
+const INCOME_EFFECTS: Record<IncomeType, Partial<Record<ResourceType, number>>> = {
+  "Collect Taxes": { wealth: 1 },
+  "Trade Commodities": { wealth: 1, supplies: -1 },
+  "Purchase Reserves": { wealth: -1, supplies: 1 },
+  "Supply Expedition": { supplies: 1 }
 };
 
 function applyCost(
@@ -186,6 +197,8 @@ export const useStrongholdStore = create<StrongholdState>()(
           loyalty: 1
         },
         festivalUsed: false,
+        income: undefined,
+        incomeTurn: undefined,
         edict: undefined,
         edictTurn: undefined,
         projects: [],
@@ -226,6 +239,30 @@ export const useStrongholdStore = create<StrongholdState>()(
             festivalUsed: true
           });
           return true;
+        },
+        applyIncome: (income) => {
+          if (!income) return;
+          set((state) => {
+            if (state.incomeTurn === state.turn) {
+              return { income };
+            }
+            const adjustments = INCOME_EFFECTS[income] ?? {};
+            const adjusted = { ...state.resources };
+            for (const [key, value] of Object.entries(adjustments) as [
+              ResourceType,
+              number
+            ][]) {
+              adjusted[key] = Math.max(
+                MIN_RESOURCE,
+                Math.min(MAX_RESOURCE, adjusted[key] + value)
+              );
+            }
+            return {
+              income,
+              incomeTurn: state.turn,
+              resources: adjusted
+            };
+          });
         },
         applyEdict: (edict) => {
           if (!edict) return;
@@ -585,6 +622,8 @@ export const useStrongholdStore = create<StrongholdState>()(
               loyalty: 1
             },
             festivalUsed: false,
+            income: undefined,
+            incomeTurn: undefined,
             edict: undefined,
             edictTurn: undefined,
             projects: [],
