@@ -22,34 +22,34 @@ export function EventsPanel() {
   };
 
   return (
-    <section className="flex flex-col gap-3 rounded-3xl bg-white/70 p-4 shadow-lg">
+    <section className="glass-panel flex flex-col gap-3">
       <header>
-        <h2 className="font-display text-2xl">Events</h2>
-        <p className="text-sm text-ink/70">
+        <h2 className="font-display text-2xl text-slate-100">Events</h2>
+        <p className="text-sm text-slate-400">
           Track DM-triggered plot hooks or random happenings.
         </p>
       </header>
-      <div className="flex flex-col gap-2 rounded-2xl bg-white/60 p-3">
+      <div className="glass-section flex flex-col gap-2">
         <div className="flex flex-col gap-2 md:flex-row">
           <input
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             placeholder="Event title"
-            className="flex-1 rounded-full border border-ink/20 bg-white px-3 py-2 text-sm"
+            className="input-field flex-1 rounded-full"
             readOnly={isLocked}
           />
           <textarea
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             placeholder="Event details or outcomes"
-            className="flex-1 rounded-2xl border border-ink/20 bg-white px-3 py-2 text-sm"
+            className="input-field flex-1"
             rows={2}
             readOnly={isLocked}
           />
           <button
             onClick={handleAdd}
             disabled={isLocked}
-            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
+            className="rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-teal-400 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_35px_-18px_rgba(79,70,229,0.8)] transition hover:from-indigo-400 hover:via-blue-400 hover:to-teal-300 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Add Event
           </button>
@@ -60,29 +60,29 @@ export function EventsPanel() {
           .slice()
           .reverse()
           .map((event) => (
-            <div key={event.id} className="rounded-2xl bg-white/60 p-3 text-sm">
+            <div key={event.id} className="glass-section text-sm">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <h3 className="font-semibold">{event.title}</h3>
-                  <p className="text-xs text-ink/70">Turn {event.turn}</p>
+                  <h3 className="font-semibold text-white">{event.title}</h3>
+                  <p className="text-xs text-slate-500">Turn {event.turn}</p>
                 </div>
                 <button
                   onClick={() => toggleEventResolved(event.id)}
                   disabled={isLocked}
-                  className={`rounded-full px-3 py-1 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                  className={`rounded-full border px-3 py-1 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
                     event.resolved
-                      ? "bg-emerald-200 text-emerald-900"
-                      : "bg-amber-200 text-amber-900"
+                      ? "border-emerald-400/60 bg-emerald-500/10 text-emerald-200"
+                      : "border-amber-400/60 bg-amber-500/10 text-amber-200"
                   }`}
                 >
                   {event.resolved ? "Resolved" : "Pending"}
                 </button>
               </div>
-              {event.description && <p className="mt-2 text-ink/80">{event.description}</p>}
+              {event.description && <p className="mt-2 text-slate-300">{event.description}</p>}
             </div>
           ))}
         {events.length === 0 && (
-          <p className="rounded-2xl bg-white/60 p-3 text-sm text-ink/70">
+          <p className="glass-section text-sm text-slate-400">
             Record notable developments that affect future turns.
           </p>
         )}

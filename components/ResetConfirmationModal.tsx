@@ -48,18 +48,18 @@ export function ResetConfirmationModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       onMouseDown={handleBackdropClick}
     >
-      <div className="w-full max-w-md rounded-3xl bg-parchment p-6 shadow-2xl">
-        <h2 id={titleId} className="font-display text-2xl">
+      <div className="w-full max-w-md rounded-3xl border border-white/5 bg-slate-900/70 p-6 shadow-[0_35px_70px_-35px_rgba(0,0,0,0.9)]">
+        <h2 id={titleId} className="font-display text-2xl text-white">
           Reset Campaign
         </h2>
-        <p id={descriptionId} className="mt-2 text-sm text-ink/70">
+        <p id={descriptionId} className="mt-2 text-sm text-slate-300">
           This will erase all current progress and return every tracker to its starting
           state. This action cannot be undone.
         </p>
@@ -67,14 +67,14 @@ export function ResetConfirmationModal({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold hover:bg-ink/20"
+            className="rounded-full border border-white/10 bg-slate-800/60 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-indigo-400 hover:bg-slate-800"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
+            className="rounded-full border border-rose-500/50 bg-rose-500/20 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:border-rose-400 hover:bg-rose-500/30"
           >
             Reset Campaign
           </button>

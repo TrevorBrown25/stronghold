@@ -13,13 +13,8 @@ const config: Config = {
         body: ["'Inter'", "sans-serif"]
       },
       colors: {
-        parchment: "#f2e8d5",
-        ink: "#2f1b0c",
-        accent: "#9b4a1b",
-        "accent-dark": "#743314"
-      },
-      backgroundImage: {
-        parchment: "radial-gradient(circle at top left, rgba(255,255,255,0.6), rgba(210,180,140,0.6))"
+        accent: "#6366f1",
+        "accent-dark": "#4338ca"
       }
     }
   },

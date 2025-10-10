@@ -45,57 +45,60 @@ export function DashboardPanel() {
     .sort((a, b) => b.turn - a.turn);
 
   return (
-    <section className="flex flex-col gap-4 rounded-3xl bg-white/70 p-4 shadow-lg">
+    <section className="glass-panel flex flex-col gap-4">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="font-display text-2xl">Dashboard</h2>
-          <p className="text-sm text-ink/70">
+          <h2 className="font-display text-2xl text-slate-100">Dashboard</h2>
+          <p className="text-sm text-slate-400">
             Review the current state of your stronghold at a glance.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 text-xs font-semibold text-ink/80">
-          <span className="rounded-full bg-white/80 px-3 py-1">
+        <div className="flex flex-wrap gap-2 text-xs font-semibold text-slate-300">
+          <span className="glass-badge text-xs">
             Work Orders {used}/{capacity}
           </span>
-          <span className="rounded-full bg-white/80 px-3 py-1">
+          <span className="glass-badge text-xs">
             Training {active}/{trainingCapacity}
           </span>
         </div>
       </header>
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="flex flex-col gap-3 rounded-2xl bg-white/60 p-4">
-          <h3 className="text-lg font-semibold text-ink">Resources</h3>
+        <section className="glass-section flex flex-col gap-3">
+          <h3 className="text-lg font-semibold text-slate-100">Resources</h3>
           <div className="grid gap-3 sm:grid-cols-3">
             {RESOURCE_TYPES.map((type) => (
-              <div key={type} className="rounded-xl bg-white/70 px-3 py-2 text-sm">
-                <p className="text-xs uppercase text-ink/60">
+              <div
+                key={type}
+                className="rounded-xl border border-white/10 bg-slate-900/50 px-3 py-2 text-sm text-slate-300"
+              >
+                <p className="text-xs uppercase text-slate-500">
                   {RESOURCE_LABELS[type]}
                 </p>
-                <p className="text-xl font-semibold text-ink">{resources[type]}</p>
+                <p className="text-xl font-semibold text-white">{resources[type]}</p>
               </div>
             ))}
           </div>
         </section>
-        <section className="flex flex-col gap-3 rounded-2xl bg-white/60 p-4">
-          <h3 className="text-lg font-semibold text-ink">Projects</h3>
+        <section className="glass-section flex flex-col gap-3">
+          <h3 className="text-lg font-semibold text-slate-100">Projects</h3>
           <div>
-            <h4 className="text-xs font-semibold uppercase text-ink/60">
+            <h4 className="text-xs font-semibold uppercase text-slate-500">
               In Progress
             </h4>
             <ul className="mt-2 flex flex-col gap-2">
               {activeProjects.length === 0 && (
-                <li className="rounded-xl bg-white/70 px-3 py-2 text-sm text-ink/70">
+                <li className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-400">
                   No active projects.
                 </li>
               )}
               {activeProjects.map((project) => (
                 <li
                   key={project.id}
-                  className="rounded-xl bg-white/70 px-3 py-2 text-sm"
+                  className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-200"
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span className="font-semibold text-ink">{project.name}</span>
-                    <span className="text-xs text-ink/60">
+                    <span className="font-semibold text-white">{project.name}</span>
+                    <span className="text-xs text-slate-500">
                       {project.progress}/{project.turnsRequired} turns
                     </span>
                   </div>
@@ -104,23 +107,23 @@ export function DashboardPanel() {
             </ul>
           </div>
           <div>
-            <h4 className="text-xs font-semibold uppercase text-ink/60">
+            <h4 className="text-xs font-semibold uppercase text-slate-500">
               Completed
             </h4>
             <ul className="mt-2 flex flex-col gap-2">
               {completedProjects.length === 0 && (
-                <li className="rounded-xl bg-white/70 px-3 py-2 text-sm text-ink/70">
+                <li className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-400">
                   No completed projects yet.
                 </li>
               )}
               {completedProjects.map((project) => (
                 <li
                   key={project.id}
-                  className="rounded-xl bg-white/70 px-3 py-2 text-sm"
+                  className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-200"
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span className="font-semibold text-ink">{project.name}</span>
-                    <span className="text-xs text-ink/60">
+                    <span className="font-semibold text-white">{project.name}</span>
+                    <span className="text-xs text-slate-500">
                       Turn {project.completedTurn}
                     </span>
                   </div>
@@ -129,28 +132,28 @@ export function DashboardPanel() {
             </ul>
           </div>
         </section>
-        <section className="flex flex-col gap-3 rounded-2xl bg-white/60 p-4">
-          <h3 className="text-lg font-semibold text-ink">Recruitment</h3>
+        <section className="glass-section flex flex-col gap-3">
+          <h3 className="text-lg font-semibold text-slate-100">Recruitment</h3>
           <div>
-            <h4 className="text-xs font-semibold uppercase text-ink/60">
+            <h4 className="text-xs font-semibold uppercase text-slate-500">
               Training
             </h4>
             <ul className="mt-2 flex flex-col gap-2">
               {activeRecruitments.length === 0 && (
-                <li className="rounded-xl bg-white/70 px-3 py-2 text-sm text-ink/70">
+                <li className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-400">
                   No units in training.
                 </li>
               )}
               {activeRecruitments.map((recruitment) => (
                 <li
                   key={recruitment.id}
-                  className="rounded-xl bg-white/70 px-3 py-2 text-sm"
+                  className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-200"
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span className="font-semibold text-ink">
+                    <span className="font-semibold text-white">
                       {recruitment.name}
                     </span>
-                    <span className="text-xs text-ink/60">
+                    <span className="text-xs text-slate-500">
                       {recruitment.progress}/{recruitment.turnsRequired} turns
                     </span>
                   </div>
@@ -159,25 +162,25 @@ export function DashboardPanel() {
             </ul>
           </div>
           <div>
-            <h4 className="text-xs font-semibold uppercase text-ink/60">
+            <h4 className="text-xs font-semibold uppercase text-slate-500">
               Ready Forces
             </h4>
             <ul className="mt-2 flex flex-col gap-2">
               {completedRecruitments.length === 0 && (
-                <li className="rounded-xl bg-white/70 px-3 py-2 text-sm text-ink/70">
+                <li className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-400">
                   No completed recruits yet.
                 </li>
               )}
               {completedRecruitments.map((recruitment) => (
                 <li
                   key={recruitment.id}
-                  className="rounded-xl bg-white/70 px-3 py-2 text-sm"
+                  className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-200"
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span className="font-semibold text-ink">
+                    <span className="font-semibold text-white">
                       {recruitment.name}
                     </span>
-                    <span className="text-xs text-ink/60">
+                    <span className="text-xs text-slate-500">
                       Turn {recruitment.completedTurn}
                     </span>
                   </div>
@@ -186,32 +189,32 @@ export function DashboardPanel() {
             </ul>
           </div>
         </section>
-        <section className="flex flex-col gap-3 rounded-2xl bg-white/60 p-4">
-          <h3 className="text-lg font-semibold text-ink">Recent Outcomes</h3>
+        <section className="glass-section flex flex-col gap-3">
+          <h3 className="text-lg font-semibold text-slate-100">Recent Outcomes</h3>
           <div>
-            <h4 className="text-xs font-semibold uppercase text-ink/60">
+            <h4 className="text-xs font-semibold uppercase text-slate-500">
               Completed Missions
             </h4>
             <ul className="mt-2 flex flex-col gap-2">
               {completedMissions.length === 0 && (
-                <li className="rounded-xl bg-white/70 px-3 py-2 text-sm text-ink/70">
+                <li className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-400">
                   No completed missions recorded.
                 </li>
               )}
               {completedMissions.map((mission) => (
                 <li
                   key={mission.id}
-                  className="rounded-xl bg-white/70 px-3 py-2 text-sm"
+                  className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-200"
                 >
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center justify-between gap-3">
-                      <span className="font-semibold text-ink">
+                      <span className="font-semibold text-white">
                         {mission.name}
                       </span>
-                      <span className="text-xs text-ink/60">Turn {mission.turn}</span>
+                      <span className="text-xs text-slate-500">Turn {mission.turn}</span>
                     </div>
                     {mission.result && (
-                      <p className="text-xs text-ink/70">Result: {mission.result}</p>
+                      <p className="text-xs text-slate-400">Result: {mission.result}</p>
                     )}
                   </div>
                 </li>
@@ -219,27 +222,27 @@ export function DashboardPanel() {
             </ul>
           </div>
           <div>
-            <h4 className="text-xs font-semibold uppercase text-ink/60">
+            <h4 className="text-xs font-semibold uppercase text-slate-500">
               Resolved Events
             </h4>
             <ul className="mt-2 flex flex-col gap-2">
               {resolvedEvents.length === 0 && (
-                <li className="rounded-xl bg-white/70 px-3 py-2 text-sm text-ink/70">
+                <li className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-400">
                   No events have been resolved.
                 </li>
               )}
               {resolvedEvents.map((event) => (
                 <li
                   key={event.id}
-                  className="rounded-xl bg-white/70 px-3 py-2 text-sm"
+                  className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-200"
                 >
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center justify-between gap-3">
-                      <span className="font-semibold text-ink">{event.title}</span>
-                      <span className="text-xs text-ink/60">Turn {event.turn}</span>
+                      <span className="font-semibold text-white">{event.title}</span>
+                      <span className="text-xs text-slate-500">Turn {event.turn}</span>
                     </div>
                     {event.description && (
-                      <p className="text-xs text-ink/70">{event.description}</p>
+                      <p className="text-xs text-slate-400">{event.description}</p>
                     )}
                   </div>
                 </li>

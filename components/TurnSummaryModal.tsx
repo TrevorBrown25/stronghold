@@ -20,15 +20,15 @@ export function TurnSummaryModal({ open, onClose, onConfirm }: TurnSummaryModalP
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="w-full max-w-3xl rounded-3xl bg-parchment p-6 shadow-2xl">
-        <h2 className="font-display text-3xl">Turn Summary</h2>
-        <p className="text-sm text-ink/70">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur">
+      <div className="w-full max-w-3xl rounded-3xl border border-white/5 bg-slate-900/70 p-6 shadow-[0_35px_70px_-35px_rgba(0,0,0,0.9)]">
+        <h2 className="font-display text-3xl text-white">Turn Summary</h2>
+        <p className="text-sm text-slate-300">
           Review the turn&rsquo;s highlights before advancing the calendar.
         </p>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <SummaryCard title="Resources">
-            <ul className="text-sm text-ink/80">
+            <ul className="text-sm text-slate-200">
               <li>Wealth: {resources.wealth}</li>
               <li>Supplies: {resources.supplies}</li>
               <li>Loyalty: {resources.loyalty}</li>
@@ -36,9 +36,9 @@ export function TurnSummaryModal({ open, onClose, onConfirm }: TurnSummaryModalP
           </SummaryCard>
           <SummaryCard title="Missions">
             {missions.length === 0 ? (
-              <p className="text-sm text-ink/70">No missions run this turn.</p>
+              <p className="text-sm text-slate-400">No missions run this turn.</p>
             ) : (
-              <ul className="text-sm text-ink/80">
+              <ul className="text-sm text-slate-200">
                 {missions.map((mission) => (
                   <li key={mission.id}>
                     {mission.name}: {mission.result ?? "Pending"}
@@ -49,9 +49,9 @@ export function TurnSummaryModal({ open, onClose, onConfirm }: TurnSummaryModalP
           </SummaryCard>
           <SummaryCard title="Projects">
             {projects.length === 0 ? (
-              <p className="text-sm text-ink/70">No construction underway.</p>
+              <p className="text-sm text-slate-400">No construction underway.</p>
             ) : (
-              <ul className="text-sm text-ink/80">
+              <ul className="text-sm text-slate-200">
                 {projects.map((project) => (
                   <li key={project.id}>
                     {project.name}: {project.progress}/{project.turnsRequired} turns
@@ -62,9 +62,9 @@ export function TurnSummaryModal({ open, onClose, onConfirm }: TurnSummaryModalP
           </SummaryCard>
           <SummaryCard title="Recruitment">
             {recruitments.length === 0 ? (
-              <p className="text-sm text-ink/70">No units in training.</p>
+              <p className="text-sm text-slate-400">No units in training.</p>
             ) : (
-              <ul className="text-sm text-ink/80">
+              <ul className="text-sm text-slate-200">
                 {recruitments.map((rec) => (
                   <li key={rec.id}>
                     {rec.name}: {rec.progress}/{rec.turnsRequired}
@@ -75,9 +75,9 @@ export function TurnSummaryModal({ open, onClose, onConfirm }: TurnSummaryModalP
           </SummaryCard>
           <SummaryCard title="Events" className="md:col-span-2">
             {events.length === 0 ? (
-              <p className="text-sm text-ink/70">No new events logged.</p>
+              <p className="text-sm text-slate-400">No new events logged.</p>
             ) : (
-              <ul className="text-sm text-ink/80">
+              <ul className="text-sm text-slate-200">
                 {events
                   .slice()
                   .reverse()
@@ -93,14 +93,14 @@ export function TurnSummaryModal({ open, onClose, onConfirm }: TurnSummaryModalP
         <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="rounded-full bg-ink/10 px-4 py-2 text-sm font-semibold hover:bg-ink/20"
+            className="rounded-full border border-white/10 bg-slate-800/60 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-indigo-400 hover:bg-slate-800"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={isLocked}
-            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
+            className="rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-teal-400 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_35px_-18px_rgba(79,70,229,0.8)] transition hover:from-indigo-400 hover:via-blue-400 hover:to-teal-300 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Advance Turn
           </button>
@@ -120,8 +120,8 @@ function SummaryCard({
   className?: string;
 }) {
   return (
-    <div className={`rounded-2xl bg-white/70 p-4 ${className ?? ""}`}>
-      <h3 className="font-semibold text-lg">{title}</h3>
+    <div className={`glass-section ${className ?? ""}`}>
+      <h3 className="text-lg font-semibold text-white">{title}</h3>
       <div className="mt-2 space-y-1">{children}</div>
     </div>
   );

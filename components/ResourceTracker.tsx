@@ -27,37 +27,37 @@ export function ResourceTracker() {
   const canFestival = useMemo(() => !festivalUsed, [festivalUsed]);
 
   return (
-    <section className="flex flex-col gap-4 rounded-3xl bg-white/70 p-4 shadow-lg">
+    <section className="glass-panel flex flex-col gap-4">
       <header className="flex items-center justify-between">
-        <h2 className="font-display text-2xl">Resources</h2>
+        <h2 className="font-display text-2xl text-slate-100">Resources</h2>
         <div className="flex gap-4 text-sm">
-          <span className="rounded-full bg-white/80 px-3 py-1 font-semibold text-ink/80">
+          <span className="glass-badge">
             Work Orders {used}/{capacity}
           </span>
-          <span className="rounded-full bg-white/80 px-3 py-1 font-semibold text-ink/80">
+          <span className="glass-badge">
             Training {active}/{trainingCap}
           </span>
         </div>
       </header>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
         {RESOURCE_KEYS.map((key) => (
-          <div key={key} className="flex flex-col gap-2 rounded-2xl bg-white/60 p-3">
-            <div className="flex items-center justify-between text-sm font-semibold">
-              <span>{RESOURCE_LABELS[key]}</span>
-              <span className="text-lg">{resources[key]}</span>
+          <div key={key} className="glass-section flex flex-col gap-2">
+            <div className="flex items-center justify-between text-sm font-semibold text-slate-200">
+              <span className="text-slate-400">{RESOURCE_LABELS[key]}</span>
+              <span className="text-lg text-white">{resources[key]}</span>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => incrementResource(key as ResourceType, -1)}
                 disabled={isLocked}
-                className="flex-1 rounded-full bg-ink/10 py-1 text-sm font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex-1 rounded-full border border-white/10 bg-slate-900/50 py-1 text-sm font-semibold text-slate-200 transition hover:border-indigo-400 hover:bg-slate-900/70 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 –
               </button>
               <button
                 onClick={() => incrementResource(key as ResourceType, 1)}
                 disabled={isLocked}
-                className="flex-1 rounded-full bg-ink/10 py-1 text-sm font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex-1 rounded-full border border-white/10 bg-slate-900/50 py-1 text-sm font-semibold text-slate-200 transition hover:border-indigo-400 hover:bg-slate-900/70 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 +
               </button>
@@ -69,7 +69,7 @@ export function ResourceTracker() {
         <button
           onClick={() => runFestival()}
           disabled={isLocked || !canFestival}
-          className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
+          className="rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_35px_-18px_rgba(79,70,229,0.8)] transition hover:from-indigo-400 hover:via-purple-400 hover:to-emerald-300 disabled:cursor-not-allowed disabled:opacity-50"
           title="Spend 1 Wealth and 1 Supplies to gain +1 Loyalty. Once per turn."
         >
           Festival

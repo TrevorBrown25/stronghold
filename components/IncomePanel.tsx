@@ -29,10 +29,10 @@ export function IncomePanel() {
   };
 
   return (
-    <section className="flex flex-col gap-3 rounded-3xl bg-white/70 p-4 shadow-lg">
+    <section className="glass-panel flex flex-col gap-3">
       <header>
-        <h2 className="font-display text-2xl">Income &amp; Edict</h2>
-        <p className="text-sm text-ink/70">
+        <h2 className="font-display text-2xl text-slate-100">Income &amp; Edict</h2>
+        <p className="text-sm text-slate-400">
           Choose the realm&rsquo;s focus this turn to adjust your resources.
         </p>
       </header>
@@ -43,9 +43,9 @@ export function IncomePanel() {
             className={clsx(
               "flex flex-col gap-1 rounded-2xl border px-3 py-2 text-sm transition",
               selected === option.value
-                ? "border-accent bg-white"
-                : "border-transparent bg-white/60",
-              isLocked ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+                ? "border-indigo-400/70 bg-indigo-500/10 shadow-[0_18px_35px_-20px_rgba(79,70,229,0.9)]"
+                : "border-white/10 bg-slate-900/50",
+              isLocked ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:border-indigo-400/50 hover:bg-slate-900/60"
             )}
           >
             <span className="flex items-center gap-2">
@@ -56,22 +56,23 @@ export function IncomePanel() {
                 checked={selected === option.value}
                 onChange={() => setSelected(option.value)}
                 disabled={isLocked}
+                className="accent-indigo-400"
               />
-              <span className="font-semibold">{option.value}</span>
+              <span className="font-semibold text-slate-100">{option.value}</span>
             </span>
-            <span className="text-xs text-ink/70">{option.description}</span>
+            <span className="text-xs text-slate-400">{option.description}</span>
           </label>
         ))}
       </div>
       <button
         onClick={handleApply}
         disabled={isLocked}
-        className="w-fit rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:bg-ink/30"
+        className="w-fit rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-teal-400 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_35px_-18px_rgba(79,70,229,0.8)] transition hover:from-indigo-400 hover:via-blue-400 hover:to-teal-300 disabled:cursor-not-allowed disabled:opacity-50"
       >
         Apply Edict
       </button>
       {edictTurn === turn && (
-        <p className="text-xs text-emerald-700">Edict applied for this turn.</p>
+        <p className="text-xs text-emerald-300">Edict applied for this turn.</p>
       )}
     </section>
   );

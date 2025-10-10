@@ -6,26 +6,26 @@ export function CaptainsPanel() {
   const captains = useStrongholdStore((state) => state.captains);
 
   return (
-    <section className="flex flex-col gap-3 rounded-3xl bg-white/70 p-4 shadow-lg">
+    <section className="glass-panel flex flex-col gap-3">
       <header>
-        <h2 className="font-display text-2xl">Captains</h2>
-        <p className="text-sm text-ink/70">
+        <h2 className="font-display text-2xl text-slate-100">Captains</h2>
+        <p className="text-sm text-slate-400">
           Assign captains to missions to leverage their specialties.
         </p>
       </header>
       <div className="grid gap-3 md:grid-cols-2">
         {captains.map((captain) => (
-          <div key={captain.id} className="rounded-2xl bg-white/60 p-4">
-            <h3 className="font-semibold text-lg">{captain.name}</h3>
-            <p className="text-sm text-ink/70">{captain.specialty}</p>
+          <div key={captain.id} className="glass-section">
+            <h3 className="text-lg font-semibold text-white">{captain.name}</h3>
+            <p className="text-sm text-slate-400">{captain.specialty}</p>
             {captain.traits && (
-              <ul className="mt-1 list-disc pl-5 text-xs text-ink/60">
+              <ul className="mt-1 list-disc pl-5 text-xs text-slate-500">
                 {captain.traits.map((trait) => (
                   <li key={trait}>{trait}</li>
                 ))}
               </ul>
             )}
-            <p className="mt-2 text-xs font-semibold text-ink/80">
+            <p className="mt-2 text-xs font-semibold text-slate-300">
               {captain.assignedMissionId
                 ? `Assigned to mission ${captain.assignedMissionId.slice(0, 8)}`
                 : "Ready for deployment"}
