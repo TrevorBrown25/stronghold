@@ -62,7 +62,7 @@ export type TroopStatus = "active" | "veteran" | "exhausted" | "destroyed";
 export interface Troop {
   id: string;
   name: string;
-  tier: "regular" | "elite" | "unique";
+  tier: "militia" | "regular" | "elite" | "unique";
   type: string;
   status: TroopStatus;
   advantages: string;
