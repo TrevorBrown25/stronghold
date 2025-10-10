@@ -41,7 +41,7 @@ export default function Home() {
     if (isLocked) return;
     completeTurn();
     setSummaryOpen(false);
-  }, [completeTurn]);
+  }, [completeTurn, isLocked]);
 
   const handleExport = () => {
     if (isLocked) return;
