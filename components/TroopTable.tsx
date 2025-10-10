@@ -8,9 +8,7 @@ import type { Troop, TroopStatus } from "@/lib/types";
 
 const STATUS_OPTIONS: TroopStatus[] = [
   "active",
-  "veteran",
-  "exhausted",
-  "destroyed"
+  "deployed"
 ];
 
 export function TroopTable() {
