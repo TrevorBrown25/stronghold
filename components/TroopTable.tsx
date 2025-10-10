@@ -6,14 +6,13 @@ import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { useStrongholdStore } from "@/lib/store";
 import type { Troop, TroopStatus } from "@/lib/types";
 
-const STATUS_OPTIONS: TroopStatus[] = [
-  "active",
-  "deployed"
-];
+const STATUS_OPTIONS: TroopStatus[] = ["active", "deployed", "recovering"];
 
 export function TroopTable() {
   const troops = useStrongholdStore((state) => state.troops);
   const updateTroopStatus = useStrongholdStore((state) => state.updateTroopStatus);
+  const removeTroop = useStrongholdStore((state) => state.removeTroop);
+  const turn = useStrongholdStore((state) => state.turn);
   const [sortKey, setSortKey] = useState<"tier" | "status" | "name">("tier");
   const isLocked = useEditLockStore(selectIsLocked);
 
@@ -27,12 +26,29 @@ export function TroopTable() {
 
   const handleStatusChange = (troop: Troop, status: TroopStatus) => {
     if (isLocked) return;
+    const recoveringLocked =
+      troop.status === "recovering" && troop.recoveringUntilTurn === turn;
+    if (recoveringLocked && status !== "recovering") return;
     updateTroopStatus(troop.id, status);
   };
 
   const handleMissionSuccess = (troop: Troop) => {
     if (isLocked) return;
-    updateTroopStatus(troop.id, troop.status, 1);
+    updateTroopStatus(troop.id, "active", 1);
+  };
+
+  const handleMissionFailure = (troop: Troop) => {
+    if (isLocked) return;
+    updateTroopStatus(troop.id, "recovering", 1);
+  };
+
+  const handleTotalMissionFailure = (troop: Troop) => {
+    if (isLocked) return;
+    const confirmed = window.confirm(
+      `Remove ${troop.name} from the roster? This cannot be undone.`
+    );
+    if (!confirmed) return;
+    removeTroop(troop.id);
   };
 
   return (
@@ -71,42 +87,72 @@ export function TroopTable() {
             </tr>
           </thead>
           <tbody>
-            {sorted.map((troop) => (
-              <tr key={troop.id} className="border-b border-ink/10 last:border-none">
-                <td className="px-3 py-2 font-semibold">{troop.name}</td>
-                <td className="px-3 py-2 capitalize">{troop.tier}</td>
-                <td className="px-3 py-2">
-                  <select
-                    value={troop.status}
-                    onChange={(event) =>
-                      handleStatusChange(troop, event.target.value as TroopStatus)
-                    }
-                    className="rounded-full border border-ink/20 bg-white px-2 py-1 text-xs"
-                    disabled={isLocked}
-                  >
-                    {STATUS_OPTIONS.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-                <td className="px-3 py-2 text-xs text-ink/70">{troop.advantages}</td>
-                <td className="px-3 py-2 text-center">{troop.missionsCompleted}</td>
-                <td className="px-3 py-2 text-right">
-                  <div className="flex justify-end gap-2">
-                    <button
-                      onClick={() => handleMissionSuccess(troop)}
-                      disabled={isLocked}
-                      className="rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold hover:bg-ink/20 disabled:cursor-not-allowed disabled:opacity-60"
-                      title="Mark successful mission"
+            {sorted.map((troop) => {
+              const recoveringLocked =
+                troop.status === "recovering" &&
+                troop.recoveringUntilTurn === turn;
+
+              return (
+                <tr
+                  key={troop.id}
+                  className="border-b border-ink/10 last:border-none"
+                >
+                  <td className="px-3 py-2 font-semibold">{troop.name}</td>
+                  <td className="px-3 py-2 capitalize">{troop.tier}</td>
+                  <td className="px-3 py-2">
+                    <select
+                      value={troop.status}
+                      onChange={(event) =>
+                        handleStatusChange(troop, event.target.value as TroopStatus)
+                      }
+                      className="rounded-full border border-ink/20 bg-white px-2 py-1 text-xs"
+                      disabled={isLocked || recoveringLocked}
                     >
-                      Mission Success
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                      {STATUS_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="px-3 py-2 text-xs text-ink/70">{troop.advantages}</td>
+                  <td className="px-3 py-2 text-center">{troop.missionsCompleted}</td>
+                  <td className="px-3 py-2 text-right">
+                    <div className="flex flex-wrap justify-end gap-2">
+                      {recoveringLocked && (
+                        <span className="self-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">
+                          Recovering
+                        </span>
+                      )}
+                      <button
+                        onClick={() => handleMissionSuccess(troop)}
+                        disabled={isLocked || recoveringLocked}
+                        className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-900 hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-60"
+                        title="Mark successful mission"
+                      >
+                        Mission Success
+                      </button>
+                      <button
+                        onClick={() => handleMissionFailure(troop)}
+                        disabled={isLocked || recoveringLocked}
+                        className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-900 hover:bg-amber-200 disabled:cursor-not-allowed disabled:opacity-60"
+                        title="Mark failed mission"
+                      >
+                        Mission Failure
+                      </button>
+                      <button
+                        onClick={() => handleTotalMissionFailure(troop)}
+                        disabled={isLocked}
+                        className="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-900 hover:bg-rose-200 disabled:cursor-not-allowed disabled:opacity-60"
+                        title="Remove troop from roster"
+                      >
+                        Total Mission Failure
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

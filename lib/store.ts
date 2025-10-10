@@ -74,6 +74,7 @@ interface StrongholdState {
   toggleCaptainAssignment: (missionId: string, captainId: string) => void;
   toggleTroopAssignment: (missionId: string, troopId: string) => void;
   updateTroopStatus: (troopId: string, status: Troop["status"], deltaMission?: number) => void;
+  removeTroop: (troopId: string) => void;
   addEvent: (entry: Omit<EventEntry, "id" | "turn">) => void;
   toggleEventResolved: (id: string) => void;
   addNote: (note: Omit<NoteEntry, "id" | "turn">) => void;
@@ -473,20 +474,40 @@ export const useStrongholdStore = create<StrongholdState>()(
           }));
         },
         updateTroopStatus: (troopId, status, deltaMission = 0) => {
+          const currentTurn = get().turn;
           set((state) => ({
             troops: state.troops.map((troop) => {
               if (troop.id !== troopId) return troop;
+
+              const isRecoveringLocked =
+                troop.status === "recovering" &&
+                troop.recoveringUntilTurn === currentTurn &&
+                status !== "recovering";
+
+              if (isRecoveringLocked) {
+                return troop;
+              }
+
               const missionsCompleted = Math.max(
                 0,
                 troop.missionsCompleted + deltaMission
               );
-              const nextStatus = status;
+
+              const recoveringUntilTurn =
+                status === "recovering" ? currentTurn : undefined;
+
               return {
                 ...troop,
-                status: nextStatus,
-                missionsCompleted
+                status,
+                missionsCompleted,
+                recoveringUntilTurn
               };
             })
+          }));
+        },
+        removeTroop: (troopId) => {
+          set((state) => ({
+            troops: state.troops.filter((troop) => troop.id !== troopId)
           }));
         },
         addEvent: (entry) => {
