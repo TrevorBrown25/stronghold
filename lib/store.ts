@@ -24,6 +24,7 @@ import type {
 } from "./types";
 
 export type PhaseKey =
+  | "Dashboard"
   | "Income & Edict"
   | "Projects"
   | "Recruitment"
@@ -32,6 +33,7 @@ export type PhaseKey =
   | "Events";
 
 export const PHASES: PhaseKey[] = [
+  "Dashboard",
   "Income & Edict",
   "Projects",
   "Recruitment",
