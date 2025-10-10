@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 
 import { CaptainsPanel } from "@/components/CaptainsPanel";
 import { EditLockBanner } from "@/components/EditLockBanner";
+import { DashboardPanel } from "@/components/DashboardPanel";
 import { EventsPanel } from "@/components/EventsPanel";
 import { IncomePanel } from "@/components/IncomePanel";
 import { MissionsPanel } from "@/components/MissionsPanel";
@@ -75,6 +76,8 @@ export default function Home() {
 
   const renderPhaseContent = () => {
     switch (activePhase) {
+      case "Dashboard":
+        return <DashboardPanel />;
       case "Income & Edict":
         return <IncomePanel />;
       case "Projects":
@@ -98,7 +101,7 @@ export default function Home() {
       <div className="mx-auto flex max-w-7xl gap-6">
         <PhaseSidebar onCompleteTurn={handleEndTurn} />
         <div className="flex flex-1 flex-col gap-6">
-          <ResourceTracker />
+          {activePhase !== "Dashboard" && <ResourceTracker />}
           {renderPhaseContent()}
           {activePhase === "Missions" && <CaptainsPanel />}
           <TroopTable />
