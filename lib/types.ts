@@ -38,6 +38,7 @@ export interface RecruitmentOption {
   cost: Partial<Record<ResourceType, number>>;
   turnsRequired: number;
   result: string;
+  requiresProjects?: string[];
 }
 
 export interface RecruitmentInstance extends RecruitmentOption {
