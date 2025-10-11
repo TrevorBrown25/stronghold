@@ -708,9 +708,33 @@ export const useStrongholdStore = create<StrongholdState>()(
 export const selectors = {
   availableProjects: () => projectCatalog,
   availableRecruitment: (state: StrongholdState) =>
-    recruitmentCatalog.filter((option) =>
-      meetsProjectRequirements(state.projects, option.requiresProjects)
-    ),
+    recruitmentCatalog.filter((option) => {
+      if (!meetsProjectRequirements(state.projects, option.requiresProjects)) {
+        return false;
+      }
+
+      if (option.type === "elite") {
+        const hasTroop = state.troops.some(
+          (troop) => troop.type === option.name && troop.tier === "elite"
+        );
+        if (hasTroop) {
+          return false;
+        }
+
+        const inProgress = state.recruitments.some(
+          (rec) =>
+            rec.type === "elite" &&
+            rec.name === option.name &&
+            !rec.completedTurn
+        );
+
+        if (inProgress) {
+          return false;
+        }
+      }
+
+      return true;
+    }),
   availableCaptains: (state: StrongholdState) => state.captains,
   availableTroops: (state: StrongholdState) => state.troops,
   workOrderSummary: (state: StrongholdState) => ({

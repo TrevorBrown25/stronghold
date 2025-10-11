@@ -275,6 +275,56 @@ export const recruitmentCatalog: RecruitmentOption[] = [
     turnsRequired: 1,
     result: "Scouts harry mages and archers (+2) but risk capture by cavalry, infantry, and shields (-2).",
     requiresProjects: ["barracks", "watchtowers"]
+  },
+  {
+    id: "elite-spellknights",
+    name: "Spellknights",
+    type: "elite",
+    cost: { wealth: 1, supplies: 1 },
+    turnsRequired: 3,
+    result:
+      "Spellknights meld Cavalry Squadrons with Mage Circles, crushing shield walls (+2) but exposed to elusive scouts (-2).",
+    requiresProjects: ["barracks", "grand-barracks", "mage-tower"]
+  },
+  {
+    id: "elite-battlemages",
+    name: "Battlemages",
+    type: "elite",
+    cost: { wealth: 1, supplies: 1 },
+    turnsRequired: 3,
+    result:
+      "Battlemages unite Infantry Companies and Mage Circles, overwhelming shields (+2) yet vulnerable to cavalry flanking (-2).",
+    requiresProjects: ["barracks", "grand-barracks", "mage-tower"]
+  },
+  {
+    id: "elite-pathfinders",
+    name: "Pathfinders",
+    type: "elite",
+    cost: { wealth: 1, supplies: 1 },
+    turnsRequired: 3,
+    result:
+      "Pathfinders combine Infantry Companies with Scout Detachments, neutralising mages (+2) but wary of cavalry pursuit (-2).",
+    requiresProjects: ["barracks", "grand-barracks", "watchtowers"]
+  },
+  {
+    id: "elite-cataphracts",
+    name: "Cataphracts",
+    type: "elite",
+    cost: { wealth: 1, supplies: 1 },
+    turnsRequired: 3,
+    result:
+      "Cataphracts fuse Cavalry Squadrons with Shield Walls, devastating infantry (+2) yet slowed by concentrated mage fire (-2).",
+    requiresProjects: ["barracks", "grand-barracks"]
+  },
+  {
+    id: "elite-dreadguard",
+    name: "Dreadguard",
+    type: "elite",
+    cost: { wealth: 1, supplies: 1 },
+    turnsRequired: 3,
+    result:
+      "Dreadguard arise from Infantry Companies and Shield Walls, holding fast against cavalry (+2) but susceptible to mage barrages (-2).",
+    requiresProjects: ["barracks", "grand-barracks"]
   }
 ];
 
