@@ -128,6 +128,20 @@ function applyCost(
   return updated;
 }
 
+function refundCost(
+  resources: StrongholdState["resources"],
+  refund: Partial<Record<ResourceType, number>>
+) {
+  const updated = { ...resources };
+  for (const key of Object.keys(refund) as ResourceType[]) {
+    updated[key] = Math.max(
+      MIN_RESOURCE,
+      Math.min(MAX_RESOURCE, updated[key] + (refund[key] ?? 0))
+    );
+  }
+  return updated;
+}
+
 function canAfford(
   resources: StrongholdState["resources"],
   cost: Partial<Record<ResourceType, number>>
@@ -482,9 +496,19 @@ export const useStrongholdStore = create<StrongholdState>()(
           });
         },
         removeRecruitment: (id) => {
-          set((state) => ({
-            recruitments: state.recruitments.filter((rec) => rec.id !== id)
-          }));
+          set((state) => {
+            const target = state.recruitments.find(
+              (rec) => rec.id === id && !rec.completedTurn
+            );
+            const remaining = state.recruitments.filter((rec) => rec.id !== id);
+            if (!target) {
+              return { recruitments: remaining };
+            }
+            return {
+              recruitments: remaining,
+              resources: refundCost(state.resources, target.cost)
+            };
+          });
         },
         addMission: (mission) => {
           set((state) => ({
