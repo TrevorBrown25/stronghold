@@ -178,6 +178,20 @@ function trainingCapacity(projects: ProjectInstance[]): number {
   return capacity;
 }
 
+function hasCompletedProject(projects: ProjectInstance[], templateId: string): boolean {
+  return projects.some((project) => project.id.includes(templateId) && project.completedTurn);
+}
+
+function meetsProjectRequirements(
+  projects: ProjectInstance[],
+  required?: string[]
+): boolean {
+  if (!required || required.length === 0) {
+    return true;
+  }
+  return required.every((templateId) => hasCompletedProject(projects, templateId));
+}
+
 function createTroopFromRecruitment(option: RecruitmentOption): Troop {
   return {
     id: uuid(),
@@ -414,6 +428,9 @@ export const useStrongholdStore = create<StrongholdState>()(
           const capacity = trainingCapacity(projects);
           if (active >= capacity) {
             throw new Error("Recruitment capacity exceeded");
+          }
+          if (!meetsProjectRequirements(projects, option.requiresProjects)) {
+            throw new Error("Required project not completed");
           }
           set((state) => {
             if (!canAfford(state.resources, option.cost)) {
@@ -690,7 +707,10 @@ export const useStrongholdStore = create<StrongholdState>()(
 
 export const selectors = {
   availableProjects: () => projectCatalog,
-  availableRecruitment: () => recruitmentCatalog,
+  availableRecruitment: (state: StrongholdState) =>
+    recruitmentCatalog.filter((option) =>
+      meetsProjectRequirements(state.projects, option.requiresProjects)
+    ),
   availableCaptains: (state: StrongholdState) => state.captains,
   availableTroops: (state: StrongholdState) => state.troops,
   workOrderSummary: (state: StrongholdState) => ({

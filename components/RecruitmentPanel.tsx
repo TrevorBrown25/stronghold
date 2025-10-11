@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { selectors, useStrongholdStore } from "@/lib/store";
@@ -17,10 +17,16 @@ export function RecruitmentPanel() {
   const startRecruitment = useStrongholdStore((state) => state.startRecruitment);
   const advanceRecruitment = useStrongholdStore((state) => state.advanceRecruitment);
   const removeRecruitment = useStrongholdStore((state) => state.removeRecruitment);
-  const available = selectors.availableRecruitment();
+  const available = useStrongholdStore(selectors.availableRecruitment);
   const [selected, setSelected] = useState<string>(available[0]?.id ?? "");
   const [message, setMessage] = useState<string | null>(null);
   const isLocked = useEditLockStore(selectIsLocked);
+
+  useEffect(() => {
+    if (!available.some((option) => option.id === selected)) {
+      setSelected(available[0]?.id ?? "");
+    }
+  }, [available, selected]);
 
   const handleStart = () => {
     if (isLocked) return;

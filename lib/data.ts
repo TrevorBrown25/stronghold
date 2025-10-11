@@ -223,28 +223,58 @@ export const projectCatalog: ProjectTemplate[] = [
 
 export const recruitmentCatalog: RecruitmentOption[] = [
   {
-    id: "militia-spears",
-    name: "Militia Spear Levy",
-    type: "militia",
-    cost: { loyalty: 1 },
-    turnsRequired: 1,
-    result: "Adds a Militia infantry troop to the roster"
+    id: "regular-infantry",
+    name: "Infantry Company",
+    type: "regular",
+    cost: { supplies: 2 },
+    turnsRequired: 2,
+    result: "Regular infantry excel against shield formations (+2) but are vulnerable to cavalry charges (-2).",
+    requiresProjects: ["barracks"]
+  },
+  {
+    id: "regular-shield",
+    name: "Shield Wall",
+    type: "regular",
+    cost: { supplies: 1, loyalty: 1 },
+    turnsRequired: 2,
+    result: "Shield units blunt cavalry assaults (+2) yet struggle against disciplined infantry (-2).",
+    requiresProjects: ["barracks"]
+  },
+  {
+    id: "regular-cavalry",
+    name: "Cavalry Squadron",
+    type: "regular",
+    cost: { wealth: 2, supplies: 1 },
+    turnsRequired: 3,
+    result: "Cavalry run down infantry (+2) but falter when facing shield walls (-2).",
+    requiresProjects: ["barracks"]
   },
   {
     id: "regular-archers",
-    name: "Regular Archers",
+    name: "Archer Regiment",
     type: "regular",
     cost: { wealth: 1, supplies: 1 },
     turnsRequired: 2,
-    result: "Adds a Regular archer unit"
+    result: "Archers punish exposed cavalry (+2) but are pressured by shield troops (-2).",
+    requiresProjects: ["barracks", "archery-academy"]
   },
   {
-    id: "elite-spellknights",
-    name: "Elite Spellknights",
-    type: "elite",
-    cost: { wealth: 2, supplies: 2 },
+    id: "regular-mages",
+    name: "Mage Circle",
+    type: "regular",
+    cost: { wealth: 2, loyalty: 1 },
     turnsRequired: 3,
-    result: "Adds an Elite Spellknight troop"
+    result: "Battle-mages shatter shields (+2) yet are prime targets for cavalry (-2).",
+    requiresProjects: ["barracks", "mage-tower"]
+  },
+  {
+    id: "regular-scouts",
+    name: "Scout Detachment",
+    type: "regular",
+    cost: { supplies: 1, loyalty: 1 },
+    turnsRequired: 1,
+    result: "Scouts harry mages and archers (+2) but risk capture by cavalry, infantry, and shields (-2).",
+    requiresProjects: ["barracks", "watchtowers"]
   }
 ];
 
