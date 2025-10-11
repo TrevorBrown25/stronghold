@@ -28,7 +28,7 @@ export function RecruitmentPanel() {
     if (!option) return;
     try {
       startRecruitment(option);
-      setMessage(`Started training ${option.name}.`);
+      setMessage(`Started recruiting ${option.name}.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Cannot start recruitment.");
     }
@@ -46,7 +46,7 @@ export function RecruitmentPanel() {
         <div>
           <h2 className="font-display text-2xl text-slate-100">Recruitment</h2>
           <p className="text-sm text-slate-400">
-            Manage training slots for new units.
+            Manage recruitment slots for new units.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -67,7 +67,7 @@ export function RecruitmentPanel() {
             disabled={isLocked}
             className="rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-teal-400 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_35px_-18px_rgba(79,70,229,0.8)] transition hover:from-indigo-400 hover:via-blue-400 hover:to-teal-300 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Begin Training
+            Begin Recruitment
           </button>
         </div>
       </header>

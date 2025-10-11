@@ -16,9 +16,8 @@ export function DashboardPanel() {
   const missions = useStrongholdStore((state) => state.missions);
   const events = useStrongholdStore((state) => state.events);
   const { used, capacity } = useStrongholdStore(selectors.workOrderSummary);
-  const { active, capacity: trainingCapacity } = useStrongholdStore(
-    selectors.trainingSummary
-  );
+  const { inProgress, ready, capacity: recruitmentCapacity } =
+    useStrongholdStore(selectors.recruitmentSummary);
 
   const activeProjects = projects.filter((project) => !project.completedTurn);
   const completedProjects = projects
@@ -58,8 +57,9 @@ export function DashboardPanel() {
             Work Orders {used}/{capacity}
           </span>
           <span className="glass-badge text-xs">
-            Training {active}/{trainingCapacity}
+            Recruiting {inProgress}/{recruitmentCapacity}
           </span>
+          <span className="glass-badge text-xs">Ready Forces {ready}</span>
         </div>
       </header>
       <div className="grid gap-4 lg:grid-cols-2">
@@ -136,12 +136,12 @@ export function DashboardPanel() {
           <h3 className="text-lg font-semibold text-slate-100">Recruitment</h3>
           <div>
             <h4 className="text-xs font-semibold uppercase text-slate-500">
-              Training
+              Recruiting
             </h4>
             <ul className="mt-2 flex flex-col gap-2">
               {activeRecruitments.length === 0 && (
                 <li className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-400">
-                  No units in training.
+                  No active recruitment orders.
                 </li>
               )}
               {activeRecruitments.map((recruitment) => (
@@ -168,7 +168,7 @@ export function DashboardPanel() {
             <ul className="mt-2 flex flex-col gap-2">
               {completedRecruitments.length === 0 && (
                 <li className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-400">
-                  No completed recruits yet.
+                  No ready forces yet.
                 </li>
               )}
               {completedRecruitments.map((recruitment) => (

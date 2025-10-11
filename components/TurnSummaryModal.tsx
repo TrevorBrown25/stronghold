@@ -62,7 +62,7 @@ export function TurnSummaryModal({ open, onClose, onConfirm }: TurnSummaryModalP
           </SummaryCard>
           <SummaryCard title="Recruitment">
             {recruitments.length === 0 ? (
-              <p className="text-sm text-slate-400">No units in training.</p>
+              <p className="text-sm text-slate-400">No active recruitment.</p>
             ) : (
               <ul className="text-sm text-slate-200">
                 {recruitments.map((rec) => (
