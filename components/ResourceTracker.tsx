@@ -36,7 +36,9 @@ export function ResourceTracker() {
   const applyIncome = useStrongholdStore((state) => state.applyIncome);
   const turn = useStrongholdStore((state) => state.turn);
   const { used, capacity } = useStrongholdStore(selectors.workOrderSummary);
-  const { active, capacity: trainingCap } = useStrongholdStore(selectors.trainingSummary);
+  const { inProgress, ready, capacity: recruitmentCap } = useStrongholdStore(
+    selectors.recruitmentSummary
+  );
   const isLocked = useEditLockStore(selectIsLocked);
 
   const canFestival = useMemo(() => !festivalUsed, [festivalUsed]);
@@ -87,8 +89,9 @@ export function ResourceTracker() {
             Work Orders {used}/{capacity}
           </span>
           <span className="glass-badge">
-            Training {active}/{trainingCap}
+            Recruiting {inProgress}/{recruitmentCap}
           </span>
+          <span className="glass-badge">Ready Forces {ready}</span>
         </div>
       </header>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">

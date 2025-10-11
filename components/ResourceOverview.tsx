@@ -12,8 +12,8 @@ const RESOURCE_LABELS: Record<ResourceType, string> = {
 export function ResourceOverview() {
   const resources = useStrongholdStore((state) => state.resources);
   const { used, capacity } = useStrongholdStore(selectors.workOrderSummary);
-  const { active, capacity: trainingCap } = useStrongholdStore(
-    selectors.trainingSummary
+  const { inProgress, ready, capacity: recruitmentCap } = useStrongholdStore(
+    selectors.recruitmentSummary
   );
 
   return (
@@ -25,8 +25,9 @@ export function ResourceOverview() {
             Work Orders {used}/{capacity}
           </span>
           <span className="glass-badge">
-            Training {active}/{trainingCap}
+            Recruiting {inProgress}/{recruitmentCap}
           </span>
+          <span className="glass-badge">Ready Forces {ready}</span>
         </div>
       </header>
       <div className="grid gap-3 sm:grid-cols-3">

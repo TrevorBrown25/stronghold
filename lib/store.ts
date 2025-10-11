@@ -178,6 +178,18 @@ function trainingCapacity(projects: ProjectInstance[]): number {
   return capacity;
 }
 
+function createTroopFromRecruitment(option: RecruitmentOption): Troop {
+  return {
+    id: uuid(),
+    name: option.name,
+    tier: option.type,
+    type: option.name,
+    status: "active",
+    advantages: option.result,
+    missionsCompleted: 0
+  };
+}
+
 function determineMissionResult(total: number): string {
   if (total >= 23) return "Critical Success";
   if (total >= 17) return "Success";
@@ -401,7 +413,7 @@ export const useStrongholdStore = create<StrongholdState>()(
           const active = recruitments.filter((rec) => !rec.completedTurn).length;
           const capacity = trainingCapacity(projects);
           if (active >= capacity) {
-            throw new Error("Training capacity exceeded");
+            throw new Error("Recruitment capacity exceeded");
           }
           set((state) => {
             if (!canAfford(state.resources, option.cost)) {
@@ -421,18 +433,36 @@ export const useStrongholdStore = create<StrongholdState>()(
           });
         },
         advanceRecruitment: (id) => {
-          set((state) => ({
-            recruitments: state.recruitments.map((rec) => {
+          set((state) => {
+            const newlyCompleted: RecruitmentInstance[] = [];
+            const recruitments = state.recruitments.map((rec) => {
               if (rec.id !== id || rec.completedTurn) return rec;
               const progressed = Math.min(rec.turnsRequired, rec.progress + 1);
-              return {
+              const isComplete = progressed >= rec.turnsRequired;
+              const updated: RecruitmentInstance = {
                 ...rec,
                 progress: progressed,
-                completedTurn:
-                  progressed >= rec.turnsRequired ? state.turn : rec.completedTurn
+                completedTurn: isComplete ? state.turn : rec.completedTurn
               };
-            })
-          }));
+              if (isComplete) {
+                newlyCompleted.push(updated);
+              }
+              return updated;
+            });
+
+            if (newlyCompleted.length === 0) {
+              return { recruitments };
+            }
+
+            const newTroops = newlyCompleted.map((rec) =>
+              createTroopFromRecruitment(rec)
+            );
+
+            return {
+              recruitments,
+              troops: [...state.troops, ...newTroops]
+            };
+          });
         },
         removeRecruitment: (id) => {
           set((state) => ({
@@ -667,10 +697,15 @@ export const selectors = {
     used: workOrderSlots(state.projects),
     capacity: workOrderCapacity(state.projects)
   }),
-  trainingSummary: (state: StrongholdState) => ({
-    active: state.recruitments.filter((rec) => !rec.completedTurn).length,
-    capacity: trainingCapacity(state.projects)
-  })
+  recruitmentSummary: (state: StrongholdState) => {
+    const inProgress = state.recruitments.filter((rec) => !rec.completedTurn).length;
+    const ready = state.recruitments.filter((rec) => rec.completedTurn).length;
+    return {
+      inProgress,
+      ready,
+      capacity: trainingCapacity(state.projects)
+    };
+  }
 };
 
 export { STARTING_RESOURCES };
