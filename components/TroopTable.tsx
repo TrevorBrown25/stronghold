@@ -5,6 +5,12 @@ import { useMemo, useState } from "react";
 import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { useStrongholdStore } from "@/lib/store";
 import type { Troop, TroopStatus } from "@/lib/types";
+import {
+  ALL_TROOPS,
+  buildMatchupMatrix,
+  isTroopType,
+  type Troop as TroopKind
+} from "@/lib/matchups";
 
 const STATUS_OPTIONS: TroopStatus[] = ["active", "deployed", "recovering"];
 
@@ -15,6 +21,43 @@ export function TroopTable() {
   const turn = useStrongholdStore((state) => state.turn);
   const [sortKey, setSortKey] = useState<"tier" | "status" | "name">("tier");
   const isLocked = useEditLockStore(selectIsLocked);
+  const matchupMatrix = useMemo(() => buildMatchupMatrix(), []);
+
+  const describeMatchups = (troop: Troop): string => {
+    const troopType = troop.type;
+    if (!isTroopType(troopType)) {
+      return troop.advantages || "—";
+    }
+
+    const matchups = matchupMatrix[troopType];
+    const positives: Array<[number, TroopKind[]]> = [];
+    const negatives: Array<[number, TroopKind[]]> = [];
+
+    for (const opponent of ALL_TROOPS) {
+      if (opponent === troop.type) continue;
+      const modifier = matchups[opponent];
+      if (!modifier) continue;
+      const bucket = modifier > 0 ? positives : negatives;
+      const existing = bucket.find(([value]) => value === modifier);
+      if (existing) {
+        existing[1].push(opponent);
+      } else {
+        bucket.push([modifier, [opponent]]);
+      }
+    }
+
+    const formatBucket = ([value, opponents]: [number, TroopKind[]]) => {
+      const prefix = value > 0 ? `+${value}` : `${value}`;
+      return `${prefix} vs ${opponents.join(", ")}`;
+    };
+
+    positives.sort((a, b) => b[0] - a[0]);
+    negatives.sort((a, b) => a[0] - b[0]);
+
+    const segments = [...positives, ...negatives].map(formatBucket);
+
+    return segments.length > 0 ? segments.join(" • ") : "Balanced";
+  };
 
   const sorted = useMemo(() => {
     return troops.slice().sort((a, b) => {
@@ -81,7 +124,7 @@ export function TroopTable() {
               <th className="px-3 py-2">Unit</th>
               <th className="px-3 py-2">Tier</th>
               <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Advantages</th>
+              <th className="px-3 py-2">Matchups</th>
               <th className="px-3 py-2">Missions</th>
               <th className="px-3 py-2 text-right">Actions</th>
             </tr>
@@ -112,7 +155,9 @@ export function TroopTable() {
                       ))}
                     </select>
                   </td>
-                  <td className="px-3 py-2 text-xs text-slate-400">{troop.advantages}</td>
+                  <td className="px-3 py-2 text-xs text-slate-400">
+                    {describeMatchups(troop)}
+                  </td>
                   <td className="px-3 py-2 text-center text-slate-300">{troop.missionsCompleted}</td>
                   <td className="px-3 py-2 text-right">
                     <div className="flex flex-wrap justify-end gap-2">
