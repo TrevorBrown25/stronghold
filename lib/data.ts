@@ -223,10 +223,19 @@ export const projectCatalog: ProjectTemplate[] = [
 
 export const recruitmentCatalog: RecruitmentOption[] = [
   {
+    id: "militia",
+    name: "Militia",
+    type: "militia",
+    cost: { wealth: 1 },
+    turnsRequired: 1,
+    result:
+      "Militia muster from the populace to defend the stronghold, holding their own only against other militia (even) and faltering against any trained troops (-2)."
+  },
+  {
     id: "regular-infantry",
     name: "Infantry Company",
     type: "regular",
-    cost: { supplies: 2 },
+    cost: { wealth: 1, supplies: 1 },
     turnsRequired: 2,
     result: "Regular infantry excel against shield formations (+2) but are vulnerable to cavalry charges (-2).",
     requiresProjects: ["barracks"]
@@ -235,7 +244,7 @@ export const recruitmentCatalog: RecruitmentOption[] = [
     id: "regular-shield",
     name: "Shield Wall",
     type: "regular",
-    cost: { supplies: 1, loyalty: 1 },
+    cost: { wealth: 1, supplies: 1 },
     turnsRequired: 2,
     result: "Shield units blunt cavalry assaults (+2) yet struggle against disciplined infantry (-2).",
     requiresProjects: ["barracks"]
@@ -244,7 +253,7 @@ export const recruitmentCatalog: RecruitmentOption[] = [
     id: "regular-cavalry",
     name: "Cavalry Squadron",
     type: "regular",
-    cost: { wealth: 2, supplies: 1 },
+    cost: { wealth: 1, supplies: 1 },
     turnsRequired: 3,
     result: "Cavalry run down infantry (+2) but falter when facing shield walls (-2).",
     requiresProjects: ["barracks"]
@@ -262,7 +271,7 @@ export const recruitmentCatalog: RecruitmentOption[] = [
     id: "regular-mages",
     name: "Mage Circle",
     type: "regular",
-    cost: { wealth: 2, loyalty: 1 },
+    cost: { wealth: 1, supplies: 1 },
     turnsRequired: 3,
     result: "Battle-mages shatter shields (+2) yet are prime targets for cavalry (-2).",
     requiresProjects: ["barracks", "mage-tower"]
@@ -271,7 +280,7 @@ export const recruitmentCatalog: RecruitmentOption[] = [
     id: "regular-scouts",
     name: "Scout Detachment",
     type: "regular",
-    cost: { supplies: 1, loyalty: 1 },
+    cost: { wealth: 1, supplies: 1 },
     turnsRequired: 1,
     result: "Scouts harry mages and archers (+2) but risk capture by cavalry, infantry, and shields (-2).",
     requiresProjects: ["barracks", "watchtowers"]
@@ -280,7 +289,7 @@ export const recruitmentCatalog: RecruitmentOption[] = [
     id: "elite-spellknights",
     name: "Spellknights",
     type: "elite",
-    cost: { wealth: 1, supplies: 1 },
+    cost: { wealth: 2, supplies: 2 },
     turnsRequired: 3,
     result:
       "Spellknights meld Cavalry Squadrons with Mage Circles, crushing shield walls (+2) but exposed to elusive scouts (-2).",
@@ -290,7 +299,7 @@ export const recruitmentCatalog: RecruitmentOption[] = [
     id: "elite-battlemages",
     name: "Battlemages",
     type: "elite",
-    cost: { wealth: 1, supplies: 1 },
+    cost: { wealth: 2, supplies: 2 },
     turnsRequired: 3,
     result:
       "Battlemages unite Infantry Companies and Mage Circles, overwhelming shields (+2) yet vulnerable to cavalry flanking (-2).",
@@ -300,7 +309,7 @@ export const recruitmentCatalog: RecruitmentOption[] = [
     id: "elite-pathfinders",
     name: "Pathfinders",
     type: "elite",
-    cost: { wealth: 1, supplies: 1 },
+    cost: { wealth: 2, supplies: 2 },
     turnsRequired: 3,
     result:
       "Pathfinders combine Infantry Companies with Scout Detachments, neutralising mages (+2) but wary of cavalry pursuit (-2).",
@@ -310,7 +319,7 @@ export const recruitmentCatalog: RecruitmentOption[] = [
     id: "elite-cataphracts",
     name: "Cataphracts",
     type: "elite",
-    cost: { wealth: 1, supplies: 1 },
+    cost: { wealth: 2, supplies: 2 },
     turnsRequired: 3,
     result:
       "Cataphracts fuse Cavalry Squadrons with Shield Walls, devastating infantry (+2) yet slowed by concentrated mage fire (-2).",
@@ -320,7 +329,7 @@ export const recruitmentCatalog: RecruitmentOption[] = [
     id: "elite-dreadguard",
     name: "Dreadguard",
     type: "elite",
-    cost: { wealth: 1, supplies: 1 },
+    cost: { wealth: 2, supplies: 2 },
     turnsRequired: 3,
     result:
       "Dreadguard arise from Infantry Companies and Shield Walls, holding fast against cavalry (+2) but susceptible to mage barrages (-2).",
