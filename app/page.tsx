@@ -15,6 +15,7 @@ import { RecruitmentPanel } from "@/components/RecruitmentPanel";
 import { ResourceTracker } from "@/components/ResourceTracker";
 import { ResourceOverview } from "@/components/ResourceOverview";
 import { TroopTable } from "@/components/TroopTable";
+import { TroopMatchupsPanel } from "@/components/TroopMatchupsPanel";
 import { TurnSummaryModal } from "@/components/TurnSummaryModal";
 import { ResetConfirmationModal } from "@/components/ResetConfirmationModal";
 import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
@@ -110,7 +111,10 @@ export default function Home() {
           {renderPhaseContent()}
           {activePhase === "Missions" && <CaptainsPanel />}
           {(activePhase === "Recruitment" || activePhase === "Missions") && (
-            <TroopTable />
+            <>
+              <TroopTable />
+              <TroopMatchupsPanel />
+            </>
           )}
           {!isLocked && (
             <div className="glass-panel flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
