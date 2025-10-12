@@ -70,7 +70,9 @@ export function TroopTable() {
   const handleStatusChange = (troop: Troop, status: TroopStatus) => {
     if (isLocked) return;
     const recoveringLocked =
-      troop.status === "recovering" && troop.recoveringUntilTurn === turn;
+      troop.status === "recovering" &&
+      troop.recoveringUntilTurn !== undefined &&
+      turn <= troop.recoveringUntilTurn;
     if (recoveringLocked && status !== "recovering") return;
     updateTroopStatus(troop.id, status);
   };
@@ -133,7 +135,8 @@ export function TroopTable() {
             {sorted.map((troop) => {
               const recoveringLocked =
                 troop.status === "recovering" &&
-                troop.recoveringUntilTurn === turn;
+                troop.recoveringUntilTurn !== undefined &&
+                turn <= troop.recoveringUntilTurn;
 
               return (
                 <tr key={troop.id} className="border-b border-white/5 last:border-none">
@@ -163,7 +166,7 @@ export function TroopTable() {
                     <div className="flex flex-wrap justify-end gap-2">
                       {recoveringLocked && (
                         <span className="self-center rounded-full border border-amber-400/50 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-200">
-                          Recovering
+                          Recovering (until end of Turn {troop.recoveringUntilTurn})
                         </span>
                       )}
                       <button

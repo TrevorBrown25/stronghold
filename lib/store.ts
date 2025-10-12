@@ -601,7 +601,8 @@ export const useStrongholdStore = create<StrongholdState>()(
 
               const isRecoveringLocked =
                 troop.status === "recovering" &&
-                troop.recoveringUntilTurn === currentTurn &&
+                troop.recoveringUntilTurn !== undefined &&
+                currentTurn <= troop.recoveringUntilTurn &&
                 status !== "recovering";
 
               if (isRecoveringLocked) {
@@ -614,7 +615,9 @@ export const useStrongholdStore = create<StrongholdState>()(
               );
 
               const recoveringUntilTurn =
-                status === "recovering" ? currentTurn : undefined;
+                status === "recovering"
+                  ? currentTurn + 1
+                  : undefined;
 
               return {
                 ...troop,
@@ -773,7 +776,9 @@ export const selectors = {
       ready,
       capacity: trainingCapacity(state.projects)
     };
-  }
+  },
+  readyForces: (state: StrongholdState) =>
+    state.troops.filter((troop) => troop.status === "active").length
 };
 
 export { STARTING_RESOURCES };
