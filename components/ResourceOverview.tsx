@@ -12,9 +12,9 @@ const RESOURCE_LABELS: Record<ResourceType, string> = {
 export function ResourceOverview() {
   const resources = useStrongholdStore((state) => state.resources);
   const { used, capacity } = useStrongholdStore(selectors.workOrderSummary);
-  const { inProgress, ready, capacity: recruitmentCap } = useStrongholdStore(
-    selectors.recruitmentSummary
-  );
+  const { inProgress, capacity: recruitmentCap } =
+    useStrongholdStore(selectors.recruitmentSummary);
+  const readyForces = useStrongholdStore(selectors.readyForces);
 
   return (
     <section className="glass-panel flex flex-col gap-4">
@@ -27,7 +27,7 @@ export function ResourceOverview() {
           <span className="glass-badge">
             Recruiting {inProgress}/{recruitmentCap}
           </span>
-          <span className="glass-badge">Ready Forces {ready}</span>
+          <span className="glass-badge">Ready Forces {readyForces}</span>
         </div>
       </header>
       <div className="grid gap-3 sm:grid-cols-3">

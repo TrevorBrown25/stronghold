@@ -16,8 +16,9 @@ export function DashboardPanel() {
   const missions = useStrongholdStore((state) => state.missions);
   const events = useStrongholdStore((state) => state.events);
   const { used, capacity } = useStrongholdStore(selectors.workOrderSummary);
-  const { inProgress, ready, capacity: recruitmentCapacity } =
+  const { inProgress, ready: readyRecruits, capacity: recruitmentCapacity } =
     useStrongholdStore(selectors.recruitmentSummary);
+  const readyForces = useStrongholdStore(selectors.readyForces);
 
   const activeProjects = projects.filter((project) => !project.completedTurn);
   const completedProjects = projects
@@ -59,7 +60,7 @@ export function DashboardPanel() {
           <span className="glass-badge text-xs">
             Recruiting {inProgress}/{recruitmentCapacity}
           </span>
-          <span className="glass-badge text-xs">Ready Forces {ready}</span>
+          <span className="glass-badge text-xs">Ready Forces {readyForces}</span>
         </div>
       </header>
       <div className="grid gap-4 lg:grid-cols-2">
@@ -163,12 +164,12 @@ export function DashboardPanel() {
           </div>
           <div>
             <h4 className="text-xs font-semibold uppercase text-slate-500">
-              Ready Forces
+              Ready Recruits ({readyRecruits})
             </h4>
             <ul className="mt-2 flex flex-col gap-2">
               {completedRecruitments.length === 0 && (
                 <li className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-400">
-                  No ready forces yet.
+                  No ready recruits yet.
                 </li>
               )}
               {completedRecruitments.map((recruitment) => (
