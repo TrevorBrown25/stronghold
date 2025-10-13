@@ -820,6 +820,9 @@ export const selectors = {
 
       if (rec.convertedTroopId) {
         const troop = troopById.get(rec.convertedTroopId);
+        if (troop) {
+          matchedFallbackTroops.add(troop.id);
+        }
         if (troop?.status === "active") {
           return count + 1;
         }
