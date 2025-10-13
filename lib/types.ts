@@ -27,6 +27,8 @@ export interface ProjectInstance extends ProjectTemplate {
   progress: number;
   rushRisked?: boolean;
   completedTurn?: number;
+  startedTurn: number;
+  lastProgressTurn?: number;
 }
 
 export type RecruitmentType = "militia" | "regular" | "elite";
@@ -44,6 +46,8 @@ export interface RecruitmentOption {
 export interface RecruitmentInstance extends RecruitmentOption {
   progress: number;
   completedTurn?: number;
+  startedTurn: number;
+  lastProgressTurn?: number;
 }
 
 export type MissionCategory =

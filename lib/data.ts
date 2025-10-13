@@ -359,14 +359,4 @@ export const captainRoster: Captain[] = [
   }
 ];
 
-export const troopRoster: Troop[] = [
-  {
-    id: uuid(),
-    name: "Militia",
-    tier: "militia",
-    type: "Militia",
-    status: "active",
-    advantages: "None",
-    missionsCompleted: 0
-  }
-];
+export const troopRoster: Troop[] = [];

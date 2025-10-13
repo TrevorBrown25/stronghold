@@ -373,7 +373,8 @@ export const useStrongholdStore = create<StrongholdState>()(
                 {
                   ...template,
                   id: `${template.id}-${uuid()}`,
-                  progress: 0
+                  progress: 0,
+                  startedTurn: state.turn
                 }
               ],
               resources: applyCost(state.resources, template.cost)
@@ -384,6 +385,15 @@ export const useStrongholdStore = create<StrongholdState>()(
           set((state) => ({
             projects: state.projects.map((project) => {
               if (project.id !== id || project.completedTurn) return project;
+
+              if (state.turn <= project.startedTurn) {
+                return project;
+              }
+
+              if (project.lastProgressTurn === state.turn) {
+                return project;
+              }
+
               const progressed = Math.min(
                 project.turnsRequired,
                 project.progress + 1
@@ -391,6 +401,7 @@ export const useStrongholdStore = create<StrongholdState>()(
               return {
                 ...project,
                 progress: progressed,
+                lastProgressTurn: state.turn,
                 completedTurn:
                   progressed >= project.turnsRequired
                     ? state.turn
@@ -403,6 +414,8 @@ export const useStrongholdStore = create<StrongholdState>()(
           const state = get();
           const target = state.projects.find((project) => project.id === id);
           if (!target || target.completedTurn) return null;
+          if (state.turn <= target.startedTurn) return null;
+          if (target.lastProgressTurn === state.turn) return null;
           if (!canAfford(state.resources, { wealth: 1 })) return null;
           const roll = Math.floor(Math.random() * 12) + 1 + Math.floor(Math.random() * 12) + 1;
           const success = roll >= 13;
@@ -424,6 +437,7 @@ export const useStrongholdStore = create<StrongholdState>()(
                 ...project,
                 rushRisked: true,
                 progress: progressed,
+                lastProgressTurn: state.turn,
                 completedTurn:
                   progressed >= project.turnsRequired ? state.turn : project.completedTurn
               };
@@ -456,7 +470,8 @@ export const useStrongholdStore = create<StrongholdState>()(
                 {
                   ...option,
                   id: `${option.id}-${uuid()}`,
-                  progress: 0
+                  progress: 0,
+                  startedTurn: state.turn
                 }
               ],
               resources: applyCost(state.resources, option.cost)
@@ -468,12 +483,21 @@ export const useStrongholdStore = create<StrongholdState>()(
             const newlyCompleted: RecruitmentInstance[] = [];
             const recruitments = state.recruitments.map((rec) => {
               if (rec.id !== id || rec.completedTurn) return rec;
+
+              if (state.turn <= rec.startedTurn) {
+                return rec;
+              }
+
+              if (rec.lastProgressTurn === state.turn) {
+                return rec;
+              }
               const progressed = Math.min(rec.turnsRequired, rec.progress + 1);
               const isComplete = progressed >= rec.turnsRequired;
               const updated: RecruitmentInstance = {
                 ...rec,
                 progress: progressed,
-                completedTurn: isComplete ? state.turn : rec.completedTurn
+                completedTurn: isComplete ? state.turn : rec.completedTurn,
+                lastProgressTurn: state.turn
               };
               if (isComplete) {
                 newlyCompleted.push(updated);
@@ -777,8 +801,10 @@ export const selectors = {
       capacity: trainingCapacity(state.projects)
     };
   },
-  readyForces: (state: StrongholdState) =>
-    state.troops.filter((troop) => troop.status === "active").length
+  readyForces: (state: StrongholdState) => {
+    const readyTroops = state.troops.filter((troop) => troop.status === "active");
+    return readyTroops.length;
+  }
 };
 
 export { STARTING_RESOURCES };
