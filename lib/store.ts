@@ -467,7 +467,7 @@ export const useStrongholdStore = create<StrongholdState>()(
 
             const id = `${option.id}-${uuid()}`;
             const isMilitia = option.type === "militia";
-            const recruitment: RecruitmentInstance = {
+            let recruitment: RecruitmentInstance = {
               ...option,
               id,
               progress: isMilitia ? option.turnsRequired : 0,
@@ -477,27 +477,28 @@ export const useStrongholdStore = create<StrongholdState>()(
                 : {})
             };
 
-            const updatedState = {
-              recruitments: [...state.recruitments, recruitment],
-              resources: applyCost(state.resources, option.cost)
-            };
-
             if (isMilitia) {
+              const troop = createTroopFromRecruitment(option);
+              recruitment = {
+                ...recruitment,
+                convertedTroopId: troop.id
+              };
               return {
-                ...updatedState,
-                troops: [
-                  ...state.troops,
-                  createTroopFromRecruitment(option)
-                ]
+                recruitments: [...state.recruitments, recruitment],
+                resources: applyCost(state.resources, option.cost),
+                troops: [...state.troops, troop]
               };
             }
 
-            return updatedState;
+            return {
+              recruitments: [...state.recruitments, recruitment],
+              resources: applyCost(state.resources, option.cost)
+            };
           });
         },
         advanceRecruitment: (id) => {
           set((state) => {
-            const newlyCompleted: RecruitmentInstance[] = [];
+            const newTroops: Troop[] = [];
             const recruitments = state.recruitments.map((rec) => {
               if (rec.id !== id || rec.completedTurn) return rec;
 
@@ -514,21 +515,20 @@ export const useStrongholdStore = create<StrongholdState>()(
                 ...rec,
                 progress: progressed,
                 completedTurn: isComplete ? state.turn : rec.completedTurn,
-                lastProgressTurn: state.turn
+                lastProgressTurn: state.turn,
+                convertedTroopId: rec.convertedTroopId
               };
-              if (isComplete) {
-                newlyCompleted.push(updated);
+              if (isComplete && !rec.convertedTroopId) {
+                const troop = createTroopFromRecruitment(rec);
+                newTroops.push(troop);
+                updated.convertedTroopId = troop.id;
               }
               return updated;
             });
 
-            if (newlyCompleted.length === 0) {
+            if (newTroops.length === 0) {
               return { recruitments };
             }
-
-            const newTroops = newlyCompleted.map((rec) =>
-              createTroopFromRecruitment(rec)
-            );
 
             return {
               recruitments,
@@ -811,7 +811,36 @@ export const selectors = {
   }),
   recruitmentSummary: (state: StrongholdState) => {
     const inProgress = state.recruitments.filter((rec) => !rec.completedTurn).length;
-    const ready = state.recruitments.filter((rec) => rec.completedTurn).length;
+    const troopById = new Map(state.troops.map((troop) => [troop.id, troop]));
+    const matchedFallbackTroops = new Set<string>();
+    const ready = state.recruitments.reduce((count, rec) => {
+      if (!rec.completedTurn) {
+        return count;
+      }
+
+      if (rec.convertedTroopId) {
+        const troop = troopById.get(rec.convertedTroopId);
+        if (troop?.status === "active") {
+          return count + 1;
+        }
+        return count;
+      }
+
+      const fallbackTroop = state.troops.find((troop) => {
+        if (matchedFallbackTroops.has(troop.id)) return false;
+        return troop.name === rec.name && troop.tier === rec.type;
+      });
+
+      if (!fallbackTroop) {
+        return count;
+      }
+
+      matchedFallbackTroops.add(fallbackTroop.id);
+      if (fallbackTroop.status === "active") {
+        return count + 1;
+      }
+      return count;
+    }, 0);
     return {
       inProgress,
       ready,
