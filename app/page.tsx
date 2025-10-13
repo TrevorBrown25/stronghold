@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { clsx } from "clsx";
 
 import { CaptainsPanel } from "@/components/CaptainsPanel";
 import { EditLockBanner } from "@/components/EditLockBanner";
@@ -19,6 +20,7 @@ import { TroopMatchupsPanel } from "@/components/TroopMatchupsPanel";
 import { TurnSummaryModal } from "@/components/TurnSummaryModal";
 import { ResetConfirmationModal } from "@/components/ResetConfirmationModal";
 import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
+import { useSupabaseSync } from "@/lib/useSupabaseSync";
 import { useStrongholdStore } from "@/lib/store";
 
 export default function Home() {
@@ -30,6 +32,57 @@ export default function Home() {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const isLocked = useEditLockStore(selectIsLocked);
+  const { status: syncStatus, error: syncError, lastSyncedAt, enabled: syncEnabled } =
+    useSupabaseSync("dm");
+
+  const lastSyncedLabel = useMemo(() => {
+    if (!lastSyncedAt) return null;
+    return lastSyncedAt.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  }, [lastSyncedAt]);
+
+  const statusLabel = useMemo(() => {
+    if (!syncEnabled) return "Local Storage";
+    switch (syncStatus) {
+      case "ready":
+        return "Realtime Connected";
+      case "connecting":
+        return "Connecting";
+      case "error":
+        return "Sync Error";
+      default:
+        return "Sync";
+    }
+  }, [syncEnabled, syncStatus]);
+
+  const statusPillClass = useMemo(
+    () =>
+      clsx("rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide", {
+        "bg-slate-700/60 text-slate-300": !syncEnabled,
+        "bg-emerald-500/20 text-emerald-200": syncEnabled && syncStatus === "ready",
+        "bg-amber-500/20 text-amber-200": syncEnabled && syncStatus === "connecting",
+        "bg-rose-500/20 text-rose-200": syncEnabled && syncStatus === "error"
+      }),
+    [syncEnabled, syncStatus]
+  );
+
+  const detailMessage = useMemo(() => {
+    if (!syncEnabled) {
+      return "Supabase credentials are missing. Data will remain local to this browser.";
+    }
+    if (syncStatus === "error") {
+      return syncError ?? "Realtime sync encountered an unknown error.";
+    }
+    if (syncStatus === "connecting") {
+      return "Connecting to Supabase…";
+    }
+    if (lastSyncedLabel) {
+      return `Last update at ${lastSyncedLabel}`;
+    }
+    return "Syncing changes automatically.";
+  }, [lastSyncedLabel, syncEnabled, syncError, syncStatus]);
 
   const handleEndTurn = useCallback(() => {
     if (isLocked) return;
@@ -100,6 +153,19 @@ export default function Home() {
   return (
     <main className="min-h-screen px-4 py-6 text-slate-100 sm:px-6">
       <EditLockBanner />
+      <section className="mx-auto mb-4 w-full max-w-7xl">
+        <div className="glass-panel flex flex-col gap-2 text-sm text-slate-300 sm:flex-row sm:items-center sm:justify-between">
+          <span className={statusPillClass}>{statusLabel}</span>
+          <span
+            className={clsx(
+              "text-xs sm:text-sm",
+              syncEnabled && syncStatus === "error" ? "text-rose-300" : "text-slate-400"
+            )}
+          >
+            {detailMessage}
+          </span>
+        </div>
+      </section>
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 lg:flex-row">
         <PhaseSidebar onCompleteTurn={handleEndTurn} />
         <div className="flex flex-1 flex-col gap-6">

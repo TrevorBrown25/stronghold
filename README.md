@@ -20,6 +20,34 @@ The app persists state to `localStorage`. Use the **Export JSON** button to down
 - Troop roster with status management and mission tracking
 - Event log and PC action journal for session notes
 - End-of-turn summary modal and JSON export/reset utilities
+- Optional Supabase-backed realtime sync with a read-only `/viewer` page for your players
+
+## Supabase realtime sync (optional)
+
+You can keep the DM dashboard in sync with a read-only player view by connecting the app to Supabase.
+
+1. Create a table named `campaign_states` with this structure:
+
+   ```sql
+   create table if not exists public.campaign_states (
+     id text primary key,
+     state jsonb not null,
+     updated_at timestamptz default timezone('utc', now()) not null
+   );
+
+   alter table public.campaign_states enable row level security;
+   create policy "Allow anon read" on public.campaign_states for select using (true);
+   create policy "Allow anon upsert" on public.campaign_states for insert with check (true);
+   create policy "Allow anon update" on public.campaign_states for update using (true);
+   ```
+
+   > ⚠️ Adjust the policies to match your security expectations. The example above allows anyone with the anon key to read and write the campaign record. For production use you should scope the policies to the specific `id` value you plan to use.
+
+2. Enable [Realtime](https://supabase.com/docs/guides/realtime/postgres-changes) for the table in the Supabase dashboard.
+3. Copy `.env.example` to `.env.local` and fill in your Supabase URL, anon key, and (optionally) a custom `NEXT_PUBLIC_SUPABASE_CAMPAIGN_ID` if you want to maintain multiple campaigns in the same project.
+4. Start the dev server with `npm run dev`. The DM dashboard (`/`) will publish every change to Supabase while the `/viewer` route streams the updates in real time.
+
+When the Supabase variables are not configured the app continues to use local-only persistence.
 
 ## Deploying to GitHub Pages
 

@@ -43,7 +43,7 @@ export const PHASES: PhaseKey[] = [
   "Events"
 ];
 
-interface StrongholdState {
+export interface StrongholdData {
   turn: number;
   activePhase: PhaseKey;
   resources: Record<ResourceType, number>;
@@ -60,6 +60,9 @@ interface StrongholdState {
   events: EventEntry[];
   notes: NoteEntry[];
   turnHistory: string[];
+}
+
+interface StrongholdState extends StrongholdData {
   incrementResource: (resource: ResourceType, delta: number) => void;
   applyIncome: (income: StrongholdState["income"]) => void;
   applyEdict: (edict: StrongholdState["edict"]) => void;
@@ -87,12 +90,14 @@ interface StrongholdState {
   completeTurn: () => void;
   exportState: () => string;
   resetCampaign: () => void;
+  getSnapshot: () => StrongholdData;
+  hydrateFromSnapshot: (snapshot: StrongholdData) => void;
 }
 
 const MAX_RESOURCE = 5;
 const MIN_RESOURCE = 0;
 
-type PersistedStrongholdState = Omit<StrongholdState, "turnHistory">;
+type PersistedStrongholdState = StrongholdData;
 
 const storage = typeof window !== "undefined"
   ? createJSONStorage<PersistedStrongholdState>(() => localStorage)
@@ -223,6 +228,29 @@ function determineMissionResult(total: number): string {
   if (total >= 17) return "Success";
   if (total >= 13) return "Success with Consequences";
   return "Failure";
+}
+
+function serializeState(state: StrongholdState): StrongholdData {
+  const snapshot: StrongholdData = {
+    turn: state.turn,
+    activePhase: state.activePhase,
+    resources: state.resources,
+    festivalUsed: state.festivalUsed,
+    income: state.income,
+    incomeTurn: state.incomeTurn,
+    edict: state.edict,
+    edictTurn: state.edictTurn,
+    projects: state.projects,
+    recruitments: state.recruitments,
+    captains: state.captains,
+    troops: state.troops,
+    missions: state.missions,
+    events: state.events,
+    notes: state.notes,
+    turnHistory: state.turnHistory
+  };
+
+  return JSON.parse(JSON.stringify(snapshot)) as StrongholdData;
 }
 
 export const useStrongholdStore = create<StrongholdState>()(
@@ -737,7 +765,32 @@ export const useStrongholdStore = create<StrongholdState>()(
         },
         exportState: () => {
           const state = get();
-          return JSON.stringify(state, null, 2);
+          return JSON.stringify(serializeState(state), null, 2);
+        },
+        getSnapshot: () => {
+          const state = get();
+          return serializeState(state);
+        },
+        hydrateFromSnapshot: (snapshot) => {
+          set((state) => ({
+            ...state,
+            turn: snapshot.turn ?? state.turn,
+            activePhase: snapshot.activePhase ?? state.activePhase,
+            resources: snapshot.resources ?? state.resources,
+            festivalUsed: snapshot.festivalUsed ?? state.festivalUsed,
+            income: snapshot.income,
+            incomeTurn: snapshot.incomeTurn,
+            edict: snapshot.edict,
+            edictTurn: snapshot.edictTurn,
+            projects: snapshot.projects ?? state.projects,
+            recruitments: snapshot.recruitments ?? state.recruitments,
+            captains: snapshot.captains ?? state.captains,
+            troops: snapshot.troops ?? state.troops,
+            missions: snapshot.missions ?? state.missions,
+            events: snapshot.events ?? state.events,
+            notes: snapshot.notes ?? state.notes,
+            turnHistory: snapshot.turnHistory ?? state.turnHistory
+          }));
         },
         resetCampaign: () => {
           set({
@@ -767,7 +820,7 @@ export const useStrongholdStore = create<StrongholdState>()(
       {
         name: "stronghold-store",
         storage,
-        partialize: ({ turnHistory, ...rest }): PersistedStrongholdState => rest
+        partialize: (state): PersistedStrongholdState => serializeState(state)
       }
     )
   )
