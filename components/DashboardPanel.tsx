@@ -13,6 +13,7 @@ export function DashboardPanel() {
   const resources = useStrongholdStore((state) => state.resources);
   const projects = useStrongholdStore((state) => state.projects);
   const recruitments = useStrongholdStore((state) => state.recruitments);
+  const troops = useStrongholdStore((state) => state.troops);
   const missions = useStrongholdStore((state) => state.missions);
   const events = useStrongholdStore((state) => state.events);
   const { used, capacity } = useStrongholdStore(selectors.workOrderSummary);
@@ -33,6 +34,27 @@ export function DashboardPanel() {
     .filter((recruitment) => recruitment.completedTurn)
     .slice()
     .sort((a, b) => (b.completedTurn ?? 0) - (a.completedTurn ?? 0));
+
+  const troopById = new Map(troops.map((troop) => [troop.id, troop]));
+  const matchedFallbackTroops = new Set<string>();
+  const readyRecruitments = completedRecruitments.filter((recruitment) => {
+    if (recruitment.convertedTroopId) {
+      const troop = troopById.get(recruitment.convertedTroopId);
+      return troop?.status === "active";
+    }
+
+    const fallbackTroop = troops.find((troop) => {
+      if (matchedFallbackTroops.has(troop.id)) return false;
+      return troop.name === recruitment.name && troop.tier === recruitment.type;
+    });
+
+    if (!fallbackTroop) {
+      return false;
+    }
+
+    matchedFallbackTroops.add(fallbackTroop.id);
+    return fallbackTroop.status === "active";
+  });
 
   const completedMissions = missions
     .filter((mission) => mission.result)
@@ -167,12 +189,12 @@ export function DashboardPanel() {
               Ready Recruits ({readyRecruits})
             </h4>
             <ul className="mt-2 flex flex-col gap-2">
-              {completedRecruitments.length === 0 && (
+              {readyRecruitments.length === 0 && (
                 <li className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-400">
                   No ready recruits yet.
                 </li>
               )}
-              {completedRecruitments.map((recruitment) => (
+              {readyRecruitments.map((recruitment) => (
                 <li
                   key={recruitment.id}
                   className="rounded-xl border border-white/5 bg-slate-900/50 px-3 py-2 text-sm text-slate-200"

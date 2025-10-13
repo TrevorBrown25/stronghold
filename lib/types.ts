@@ -48,6 +48,7 @@ export interface RecruitmentInstance extends RecruitmentOption {
   completedTurn?: number;
   startedTurn: number;
   lastProgressTurn?: number;
+  convertedTroopId?: string;
 }
 
 export type MissionCategory =
