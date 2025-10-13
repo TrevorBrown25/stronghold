@@ -464,18 +464,35 @@ export const useStrongholdStore = create<StrongholdState>()(
             if (!canAfford(state.resources, option.cost)) {
               throw new Error("Insufficient resources");
             }
-            return {
-              recruitments: [
-                ...state.recruitments,
-                {
-                  ...option,
-                  id: `${option.id}-${uuid()}`,
-                  progress: 0,
-                  startedTurn: state.turn
-                }
-              ],
+
+            const id = `${option.id}-${uuid()}`;
+            const isMilitia = option.type === "militia";
+            const recruitment: RecruitmentInstance = {
+              ...option,
+              id,
+              progress: isMilitia ? option.turnsRequired : 0,
+              startedTurn: state.turn,
+              ...(isMilitia
+                ? { completedTurn: state.turn, lastProgressTurn: state.turn }
+                : {})
+            };
+
+            const updatedState = {
+              recruitments: [...state.recruitments, recruitment],
               resources: applyCost(state.resources, option.cost)
             };
+
+            if (isMilitia) {
+              return {
+                ...updatedState,
+                troops: [
+                  ...state.troops,
+                  createTroopFromRecruitment(option)
+                ]
+              };
+            }
+
+            return updatedState;
           });
         },
         advanceRecruitment: (id) => {
