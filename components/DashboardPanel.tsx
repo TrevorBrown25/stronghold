@@ -40,6 +40,9 @@ export function DashboardPanel() {
   const readyRecruitments = completedRecruitments.filter((recruitment) => {
     if (recruitment.convertedTroopId) {
       const troop = troopById.get(recruitment.convertedTroopId);
+      if (troop) {
+        matchedFallbackTroops.add(troop.id);
+      }
       return troop?.status === "active";
     }
 
