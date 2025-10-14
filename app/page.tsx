@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { clsx } from "clsx";
 
 import { CaptainsPanel } from "@/components/CaptainsPanel";
@@ -20,6 +20,7 @@ import { TroopMatchupsPanel } from "@/components/TroopMatchupsPanel";
 import { TurnSummaryModal } from "@/components/TurnSummaryModal";
 import { ResetConfirmationModal } from "@/components/ResetConfirmationModal";
 import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
+import { subscribeToRefresh } from "@/lib/refreshChannel";
 import { useSupabaseSync } from "@/lib/useSupabaseSync";
 import { useStrongholdStore } from "@/lib/store";
 
@@ -32,8 +33,28 @@ export default function Home() {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const isLocked = useEditLockStore(selectIsLocked);
-  const { status: syncStatus, error: syncError, lastSyncedAt, enabled: syncEnabled } =
-    useSupabaseSync("dm");
+  const {
+    status: syncStatus,
+    error: syncError,
+    lastSyncedAt,
+    enabled: syncEnabled,
+    pushUpdate,
+    isUpdating
+  } = useSupabaseSync("dm");
+
+  useEffect(() => {
+    if (!isLocked) {
+      return;
+    }
+
+    const unsubscribe = subscribeToRefresh(() => {
+      window.location.reload();
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [isLocked]);
 
   const lastSyncedLabel = useMemo(() => {
     if (!lastSyncedAt) return null;
@@ -44,7 +65,7 @@ export default function Home() {
   }, [lastSyncedAt]);
 
   const statusLabel = useMemo(() => {
-    if (!syncEnabled) return "Local Storage";
+    if (!syncEnabled) return "Sync Disabled";
     switch (syncStatus) {
       case "ready":
         return "Realtime Connected";
@@ -70,7 +91,7 @@ export default function Home() {
 
   const detailMessage = useMemo(() => {
     if (!syncEnabled) {
-      return "Supabase credentials are missing. Data will remain local to this browser.";
+      return "Supabase credentials are missing. Changes will not be saved to the database.";
     }
     if (syncStatus === "error") {
       return syncError ?? "Realtime sync encountered an unknown error.";
@@ -81,7 +102,7 @@ export default function Home() {
     if (lastSyncedLabel) {
       return `Last update at ${lastSyncedLabel}`;
     }
-    return "Syncing changes automatically.";
+    return "Use Update Campaign to push your latest changes.";
   }, [lastSyncedLabel, syncEnabled, syncError, syncStatus]);
 
   const handleEndTurn = useCallback(() => {
@@ -128,6 +149,14 @@ export default function Home() {
     if (isLocked) return;
     nextPhase();
   };
+
+  const handleManualUpdate = useCallback(async () => {
+    if (isLocked || !pushUpdate) return;
+    const result = await pushUpdate();
+    if (!result.success && result.error) {
+      console.error("Failed to update campaign:", result.error);
+    }
+  }, [isLocked, pushUpdate]);
 
   const renderPhaseContent = () => {
     switch (activePhase) {
@@ -190,6 +219,13 @@ export default function Home() {
                 className="rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-teal-400 px-5 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_-15px_rgba(14,116,144,0.8)] transition hover:from-indigo-400 hover:via-blue-400 hover:to-teal-300 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Next Phase
+              </button>
+              <button
+                onClick={handleManualUpdate}
+                disabled={isLocked || !pushUpdate || !syncEnabled || isUpdating}
+                className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-200 transition hover:border-emerald-300 hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isUpdating ? "Updating…" : "Update Campaign"}
               </button>
               <button
                 onClick={handleExport}

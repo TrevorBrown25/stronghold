@@ -1,6 +1,6 @@
 # Stronghold Steward
 
-A Next.js dashboard for managing a D&D-inspired stronghold turn sequence. Track resources, projects, recruitment, missions, captains, troops, and events with automatic local persistence.
+A Next.js dashboard for managing a D&D-inspired stronghold turn sequence. Track resources, projects, recruitment, missions, captains, troops, and events with Supabase-backed persistence.
 
 ## Getting Started
 
@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-The app persists state to `localStorage`. Use the **Export JSON** button to download a backup of your campaign progress.
+The app stores campaign state in Supabase. Use the **Update Campaign** button to push your latest changes and the **Export JSON** button to download a backup of your campaign progress.
 
 ## Features
 
