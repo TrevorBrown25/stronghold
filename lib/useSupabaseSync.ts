@@ -6,6 +6,41 @@ import type { RealtimeChannel } from "@supabase/supabase-js";
 import { getSupabaseClient } from "./supabaseClient";
 import { StrongholdData, useStrongholdStore } from "./store";
 
+function createSnapshot(state: StrongholdData): StrongholdData {
+  return JSON.parse(
+    JSON.stringify({
+      turn: state.turn,
+      activePhase: state.activePhase,
+      resources: state.resources,
+      festivalUsed: state.festivalUsed,
+      income: state.income,
+      incomeTurn: state.incomeTurn,
+      edict: state.edict,
+      edictTurn: state.edictTurn,
+      projects: state.projects,
+      recruitments: state.recruitments,
+      captains: state.captains,
+      troops: state.troops,
+      missions: state.missions,
+      events: state.events,
+      notes: state.notes,
+      turnHistory: state.turnHistory
+    })
+  ) as StrongholdData;
+}
+
+function snapshotsMatch(a: StrongholdData | undefined, b: StrongholdData | undefined) {
+  if (!b) {
+    return true;
+  }
+
+  if (!a) {
+    return false;
+  }
+
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
 export type SyncStatus = "disabled" | "connecting" | "ready" | "error";
 
 export function useSupabaseSync(role: "dm" | "viewer") {
@@ -136,17 +171,16 @@ export function useSupabaseSync(role: "dm" | "viewer") {
     }
 
     const unsubscribe = useStrongholdStore.subscribe(
-      async (state, previousState) => {
+      async (snapshot, previousSnapshot) => {
         if (suppressNextPush.current) {
           suppressNextPush.current = false;
           return;
         }
 
-        if (state.exportState() === previousState.exportState()) {
+        if (snapshotsMatch(snapshot, previousSnapshot)) {
           return;
         }
 
-        const snapshot = state.getSnapshot();
         const { error: pushError } = await supabase
           .from(tableName)
           .upsert(
@@ -165,7 +199,8 @@ export function useSupabaseSync(role: "dm" | "viewer") {
         }
 
         setLastSyncedAt(new Date());
-      }
+      },
+      (state) => createSnapshot(state)
     );
 
     return unsubscribe;
