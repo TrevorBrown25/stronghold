@@ -3,52 +3,19 @@
 import { useEffect, useMemo } from "react";
 import { clsx } from "clsx";
 
-import { CaptainsPanel } from "@/components/CaptainsPanel";
-import { DashboardPanel } from "@/components/DashboardPanel";
-import { EventsPanel } from "@/components/EventsPanel";
-import { IncomePanel } from "@/components/IncomePanel";
-import { MissionsPanel } from "@/components/MissionsPanel";
-import { PCNotesPanel } from "@/components/PCNotesPanel";
-import { PhaseSidebar } from "@/components/PhaseSidebar";
-import { ProjectsPanel } from "@/components/ProjectsPanel";
-import { RecruitmentPanel } from "@/components/RecruitmentPanel";
-import { ResourceOverview } from "@/components/ResourceOverview";
-import { ResourceTracker } from "@/components/ResourceTracker";
-import { TroopMatchupsPanel } from "@/components/TroopMatchupsPanel";
-import { TroopTable } from "@/components/TroopTable";
+import { ViewerDashboard } from "@/components/ViewerDashboard";
 import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { subscribeToRefresh } from "@/lib/refreshChannel";
 import { useSupabaseSync } from "@/lib/useSupabaseSync";
 import { useStrongholdStore } from "@/lib/store";
-import type { PhaseKey } from "@/lib/store";
-
-function ViewerPhaseContent({ phase }: { phase: PhaseKey }) {
-  switch (phase) {
-    case "Dashboard":
-      return <DashboardPanel />;
-    case "Income & Edict":
-      return <IncomePanel />;
-    case "Projects":
-      return <ProjectsPanel />;
-    case "Recruitment":
-      return <RecruitmentPanel />;
-    case "PC Actions":
-      return <PCNotesPanel />;
-    case "Missions":
-      return <MissionsPanel />;
-    case "Events":
-      return <EventsPanel />;
-    default:
-      return null;
-  }
-}
 
 export default function ViewerPage() {
-  const activePhase = useStrongholdStore((state) => state.activePhase);
   const lockEditing = useEditLockStore((state) => state.lock);
   const isLocked = useEditLockStore(selectIsLocked);
   const { status: syncStatus, error: syncError, lastSyncedAt, enabled: syncEnabled } =
     useSupabaseSync("viewer");
+
+  const activePhase = useStrongholdStore((state) => state.activePhase);
 
   useEffect(() => {
     if (!isLocked) {
@@ -122,8 +89,9 @@ export default function ViewerPage() {
           <div>
             <h1 className="font-display text-2xl text-slate-100">Stronghold Viewer</h1>
             <p className="text-sm text-slate-400">
-              Watch the stronghold change in real time while the DM controls the dashboard.
+              Explore a comprehensive read-only dashboard of the current stronghold state.
             </p>
+            <p className="text-xs text-slate-500">Currently tracking the {activePhase} phase.</p>
           </div>
           <div className="flex flex-col items-start gap-1 sm:items-end">
             <span className={statusPillClass}>{statusLabel}</span>
@@ -138,23 +106,8 @@ export default function ViewerPage() {
           </div>
         </div>
       </section>
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 lg:flex-row">
-        <PhaseSidebar onCompleteTurn={() => undefined} />
-        <div className="flex flex-1 flex-col gap-6">
-          {activePhase === "Income & Edict" ? (
-            <ResourceTracker />
-          ) : activePhase !== "Dashboard" ? (
-            <ResourceOverview />
-          ) : null}
-          <ViewerPhaseContent phase={activePhase} />
-          {activePhase === "Missions" && <CaptainsPanel />}
-          {(activePhase === "Recruitment" || activePhase === "Missions") && (
-            <>
-              <TroopTable />
-              <TroopMatchupsPanel />
-            </>
-          )}
-        </div>
+      <div className="mx-auto w-full max-w-7xl">
+        <ViewerDashboard />
       </div>
     </main>
   );
