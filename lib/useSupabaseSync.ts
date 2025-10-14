@@ -136,14 +136,17 @@ export function useSupabaseSync(role: "dm" | "viewer") {
     }
 
     const unsubscribe = useStrongholdStore.subscribe(
-      (state) => state.exportState(),
-      async (serialized) => {
+      async (state, previousState) => {
         if (suppressNextPush.current) {
           suppressNextPush.current = false;
           return;
         }
 
-        const snapshot = JSON.parse(serialized) as StrongholdData;
+        if (state.exportState() === previousState.exportState()) {
+          return;
+        }
+
+        const snapshot = state.getSnapshot();
         const { error: pushError } = await supabase
           .from(tableName)
           .upsert(
