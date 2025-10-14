@@ -170,38 +170,42 @@ export function useSupabaseSync(role: "dm" | "viewer") {
       return;
     }
 
-    const unsubscribe = useStrongholdStore.subscribe(
-      async (snapshot, previousSnapshot) => {
-        if (suppressNextPush.current) {
-          suppressNextPush.current = false;
-          return;
-        }
+    let previousSnapshot = createSnapshot(useStrongholdStore.getState());
 
-        if (snapshotsMatch(snapshot, previousSnapshot)) {
-          return;
-        }
+    const unsubscribe = useStrongholdStore.subscribe(async (state) => {
+      const snapshot = createSnapshot(state);
 
-        const { error: pushError } = await supabase
-          .from(tableName)
-          .upsert(
-            {
-              id: campaignId,
-              state: snapshot,
-              updated_at: new Date().toISOString()
-            },
-            { onConflict: "id" }
-          );
+      if (suppressNextPush.current) {
+        suppressNextPush.current = false;
+        previousSnapshot = snapshot;
+        return;
+      }
 
-        if (pushError) {
-          setStatus("error");
-          setError(pushError.message);
-          return;
-        }
+      if (snapshotsMatch(snapshot, previousSnapshot)) {
+        previousSnapshot = snapshot;
+        return;
+      }
 
-        setLastSyncedAt(new Date());
-      },
-      (state) => createSnapshot(state)
-    );
+      const { error: pushError } = await supabase
+        .from(tableName)
+        .upsert(
+          {
+            id: campaignId,
+            state: snapshot,
+            updated_at: new Date().toISOString()
+          },
+          { onConflict: "id" }
+        );
+
+      if (pushError) {
+        setStatus("error");
+        setError(pushError.message);
+        return;
+      }
+
+      previousSnapshot = snapshot;
+      setLastSyncedAt(new Date());
+    });
 
     return unsubscribe;
   }, [campaignId, role, status, supabase, tableName]);
