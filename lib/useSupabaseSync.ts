@@ -1,21 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 
 import { getSupabaseClient } from "./supabaseClient";
 import { StrongholdData, useStrongholdStore } from "./store";
+import { broadcastRefresh } from "./refreshChannel";
 
 export type SyncStatus = "disabled" | "connecting" | "ready" | "error";
 
 export function useSupabaseSync(role: "dm" | "viewer") {
   const supabase = getSupabaseClient();
   const hydrate = useStrongholdStore((state) => state.hydrateFromSnapshot);
-  const suppressNextPush = useRef(false);
   const channelRef = useRef<RealtimeChannel | null>(null);
   const [status, setStatus] = useState<SyncStatus>(supabase ? "connecting" : "disabled");
   const [error, setError] = useState<string | null>(null);
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const campaignId = process.env.NEXT_PUBLIC_SUPABASE_CAMPAIGN_ID ?? "primary";
   const tableName = process.env.NEXT_PUBLIC_SUPABASE_TABLE ?? "campaign_states";
@@ -48,7 +49,6 @@ export function useSupabaseSync(role: "dm" | "viewer") {
       }
 
       if (data?.state) {
-        suppressNextPush.current = true;
         hydrate(data.state as StrongholdData);
         setLastSyncedAt(
           data.updated_at ? new Date(data.updated_at) : new Date()
@@ -104,7 +104,6 @@ export function useSupabaseSync(role: "dm" | "viewer") {
           if (!next) {
             return;
           }
-          suppressNextPush.current = true;
           hydrate(next);
           setLastSyncedAt(
             payload.commit_timestamp
@@ -130,51 +129,52 @@ export function useSupabaseSync(role: "dm" | "viewer") {
     };
   }, [campaignId, hydrate, status, supabase, tableName]);
 
-  useEffect(() => {
-    if (!supabase || role !== "dm" || status !== "ready") {
-      return;
+  const pushUpdate = useCallback(async () => {
+    if (!supabase) {
+      const message = "Supabase credentials are missing.";
+      setError(message);
+      return { success: false, error: message } as const;
     }
 
-    const unsubscribe = useStrongholdStore.subscribe(
-      async (state, previousState) => {
-        if (suppressNextPush.current) {
-          suppressNextPush.current = false;
-          return;
-        }
+    if (role !== "dm") {
+      return { success: false, error: "Only the DM dashboard can push updates." } as const;
+    }
 
-        if (state.exportState() === previousState.exportState()) {
-          return;
-        }
+    setIsUpdating(true);
+    setError(null);
 
-        const snapshot = state.getSnapshot();
-        const { error: pushError } = await supabase
-          .from(tableName)
-          .upsert(
-            {
-              id: campaignId,
-              state: snapshot,
-              updated_at: new Date().toISOString()
-            },
-            { onConflict: "id" }
-          );
+    const snapshot = useStrongholdStore.getState().getSnapshot();
+    const { error: pushError } = await supabase
+      .from(tableName)
+      .upsert(
+        {
+          id: campaignId,
+          state: snapshot,
+          updated_at: new Date().toISOString()
+        },
+        { onConflict: "id" }
+      );
 
-        if (pushError) {
-          setStatus("error");
-          setError(pushError.message);
-          return;
-        }
+    setIsUpdating(false);
 
-        setLastSyncedAt(new Date());
-      }
-    );
+    if (pushError) {
+      setStatus("error");
+      setError(pushError.message);
+      return { success: false, error: pushError.message } as const;
+    }
 
-    return unsubscribe;
-  }, [campaignId, role, status, supabase, tableName]);
+    setStatus("ready");
+    setLastSyncedAt(new Date());
+    broadcastRefresh();
+    return { success: true } as const;
+  }, [campaignId, role, supabase, tableName]);
 
   return {
     status,
     error,
     lastSyncedAt,
-    enabled: Boolean(supabase)
+    enabled: Boolean(supabase),
+    pushUpdate: role === "dm" ? pushUpdate : null,
+    isUpdating
   };
 }

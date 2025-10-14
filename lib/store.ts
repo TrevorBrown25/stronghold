@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import { devtools, persist, createJSONStorage } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 import { v4 as uuid } from "uuid";
 
 import {
@@ -96,12 +96,6 @@ interface StrongholdState extends StrongholdData {
 
 const MAX_RESOURCE = 5;
 const MIN_RESOURCE = 0;
-
-type PersistedStrongholdState = StrongholdData;
-
-const storage = typeof window !== "undefined"
-  ? createJSONStorage<PersistedStrongholdState>(() => localStorage)
-  : undefined;
 
 const baseWorkOrderCapacity = 2;
 const baseTrainingCapacity = 1;
@@ -254,9 +248,7 @@ function serializeState(state: StrongholdState): StrongholdData {
 }
 
 export const useStrongholdStore = create<StrongholdState>()(
-  devtools(
-    persist<StrongholdState, [], [], PersistedStrongholdState>(
-      (set, get) => ({
+  devtools((set, get) => ({
         turn: 1,
         activePhase: PHASES[0],
         resources: {
@@ -816,15 +808,9 @@ export const useStrongholdStore = create<StrongholdState>()(
             turnHistory: []
           });
         }
-      }),
-      {
-        name: "stronghold-store",
-        storage,
-        partialize: (state): PersistedStrongholdState => serializeState(state)
-      }
+      })
     )
-  )
-);
+  );
 
 export const selectors = {
   availableProjects: () => projectCatalog,

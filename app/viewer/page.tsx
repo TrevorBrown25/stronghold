@@ -17,6 +17,7 @@ import { ResourceTracker } from "@/components/ResourceTracker";
 import { TroopMatchupsPanel } from "@/components/TroopMatchupsPanel";
 import { TroopTable } from "@/components/TroopTable";
 import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
+import { subscribeToRefresh } from "@/lib/refreshChannel";
 import { useSupabaseSync } from "@/lib/useSupabaseSync";
 import { useStrongholdStore } from "@/lib/store";
 import type { PhaseKey } from "@/lib/store";
@@ -54,6 +55,16 @@ export default function ViewerPage() {
       lockEditing();
     }
   }, [isLocked, lockEditing]);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToRefresh(() => {
+      window.location.reload();
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const lastSyncedLabel = useMemo(() => {
     if (!lastSyncedAt) return null;
