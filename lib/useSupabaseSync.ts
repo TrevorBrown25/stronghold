@@ -135,6 +135,9 @@ export function useSupabaseSync(role: "dm" | "viewer") {
       return;
     }
 
+    const pendingSnapshotRef = { current: null as StrongholdData | null };
+    const isFlushingRef = { current: false };
+
     const unsubscribe = useStrongholdStore.subscribe(
       (state) => state.exportState(),
       async (serialized) => {
@@ -143,25 +146,40 @@ export function useSupabaseSync(role: "dm" | "viewer") {
           return;
         }
 
-        const snapshot = JSON.parse(serialized) as StrongholdData;
-        const { error: pushError } = await supabase
-          .from(tableName)
-          .upsert(
-            {
-              id: campaignId,
-              state: snapshot,
-              updated_at: new Date().toISOString()
-            },
-            { onConflict: "id" }
-          );
+        pendingSnapshotRef.current = JSON.parse(serialized) as StrongholdData;
 
-        if (pushError) {
-          setStatus("error");
-          setError(pushError.message);
+        if (isFlushingRef.current) {
           return;
         }
 
-        setLastSyncedAt(new Date());
+        isFlushingRef.current = true;
+
+        while (pendingSnapshotRef.current) {
+          const snapshot = pendingSnapshotRef.current;
+          pendingSnapshotRef.current = null;
+
+          const { error: pushError } = await supabase
+            .from(tableName)
+            .upsert(
+              {
+                id: campaignId,
+                state: snapshot,
+                updated_at: new Date().toISOString()
+              },
+              { onConflict: "id" }
+            );
+
+          if (pushError) {
+            setStatus("error");
+            setError(pushError.message);
+            isFlushingRef.current = false;
+            return;
+          }
+
+          setLastSyncedAt(new Date());
+        }
+
+        isFlushingRef.current = false;
       }
     );
 
