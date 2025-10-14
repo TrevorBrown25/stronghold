@@ -6,6 +6,18 @@ import type { RealtimeChannel } from "@supabase/supabase-js";
 import { getSupabaseClient } from "./supabaseClient";
 import { StrongholdData, useStrongholdStore } from "./store";
 
+function snapshotsMatch(a: StrongholdData | undefined, b: StrongholdData | undefined) {
+  if (!b) {
+    return true;
+  }
+
+  if (!a) {
+    return false;
+  }
+
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
 export type SyncStatus = "disabled" | "connecting" | "ready" | "error";
 
 export function useSupabaseSync(role: "dm" | "viewer") {
@@ -135,38 +147,42 @@ export function useSupabaseSync(role: "dm" | "viewer") {
       return;
     }
 
-    const unsubscribe = useStrongholdStore.subscribe(
-      async (state, previousState) => {
-        if (suppressNextPush.current) {
-          suppressNextPush.current = false;
-          return;
-        }
+    let previousSnapshot = useStrongholdStore.getState().getSnapshot();
 
-        if (state.exportState() === previousState.exportState()) {
-          return;
-        }
+    const unsubscribe = useStrongholdStore.subscribe(async (state) => {
+      const snapshot = state.getSnapshot();
 
-        const snapshot = state.getSnapshot();
-        const { error: pushError } = await supabase
-          .from(tableName)
-          .upsert(
-            {
-              id: campaignId,
-              state: snapshot,
-              updated_at: new Date().toISOString()
-            },
-            { onConflict: "id" }
-          );
-
-        if (pushError) {
-          setStatus("error");
-          setError(pushError.message);
-          return;
-        }
-
-        setLastSyncedAt(new Date());
+      if (suppressNextPush.current) {
+        suppressNextPush.current = false;
+        previousSnapshot = snapshot;
+        return;
       }
-    );
+
+      if (snapshotsMatch(snapshot, previousSnapshot)) {
+        previousSnapshot = snapshot;
+        return;
+      }
+
+      const { error: pushError } = await supabase
+        .from(tableName)
+        .upsert(
+          {
+            id: campaignId,
+            state: snapshot,
+            updated_at: new Date().toISOString()
+          },
+          { onConflict: "id" }
+        );
+
+      if (pushError) {
+        setStatus("error");
+        setError(pushError.message);
+        return;
+      }
+
+      previousSnapshot = snapshot;
+      setLastSyncedAt(new Date());
+    });
 
     return unsubscribe;
   }, [campaignId, role, status, supabase, tableName]);
