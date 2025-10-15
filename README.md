@@ -14,7 +14,7 @@ The app stores campaign state in Supabase. Use the **Update Campaign** button to
 ## Features
 
 - Phase-based workflow matching the Stronghold turn structure (Income, Projects, Recruitment, PC Actions, Missions, Events)
-- Resource tracker with Work Order and Training capacity summaries, plus a festival action for balancing Wealth, Supplies, and Loyalty (campaigns begin at 2 Wealth, 2 Supplies, 1 Loyalty)
+- Resource tracker with Work Order and Training capacity summaries, plus a festival action for balancing Wealth, Supplies, and Loyalty once the Town Square is built (campaigns begin at 2 Wealth, 2 Supplies, 1 Loyalty)
 - Project and recruitment management with cost enforcement, rush construction mechanic, and progress tracking
 - Mission planner with captain/troop assignments, 2d12 rolls, and outcome logging
 - Troop roster with status management and mission tracking

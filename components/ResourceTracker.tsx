@@ -31,6 +31,11 @@ export function ResourceTracker() {
   const incrementResource = useStrongholdStore((state) => state.incrementResource);
   const runFestival = useStrongholdStore((state) => state.runFestival);
   const festivalUsed = useStrongholdStore((state) => state.festivalUsed);
+  const hasTownSquare = useStrongholdStore((state) =>
+    state.projects.some(
+      (project) => project.id.includes("tavern-square") && project.completedTurn
+    )
+  );
   const income = useStrongholdStore((state) => state.income);
   const incomeTurn = useStrongholdStore((state) => state.incomeTurn);
   const applyIncome = useStrongholdStore((state) => state.applyIncome);
@@ -41,7 +46,13 @@ export function ResourceTracker() {
   const readyForces = useStrongholdStore(selectors.readyForces);
   const isLocked = useEditLockStore(selectIsLocked);
 
-  const canFestival = useMemo(() => !festivalUsed, [festivalUsed]);
+  const canFestival = useMemo(
+    () => hasTownSquare && !festivalUsed,
+    [festivalUsed, hasTownSquare]
+  );
+  const festivalTooltip = hasTownSquare
+    ? "Spend 1 Wealth and 1 Supplies to gain +1 Loyalty. Once per turn."
+    : "Build the Town Square to unlock festivals.";
   const [selectedIncome, setSelectedIncome] = useState<IncomeType>(
     income ?? "Collect Taxes"
   );
@@ -156,10 +167,15 @@ export function ResourceTracker() {
           onClick={() => runFestival()}
           disabled={isLocked || !canFestival}
           className="rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_35px_-18px_rgba(79,70,229,0.8)] transition hover:from-indigo-400 hover:via-purple-400 hover:to-emerald-300 disabled:cursor-not-allowed disabled:opacity-50"
-          title="Spend 1 Wealth and 1 Supplies to gain +1 Loyalty. Once per turn."
+          title={festivalTooltip}
         >
           Festival
         </button>
+        {!hasTownSquare && (
+          <p className="text-xs text-slate-400">
+            Construct the Town Square to celebrate festivals.
+          </p>
+        )}
       </div>
     </section>
   );

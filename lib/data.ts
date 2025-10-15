@@ -67,11 +67,11 @@ export const projectCatalog: ProjectTemplate[] = [
   },
   {
     id: "tavern-square",
-    name: "Tavern Square",
+    name: "Town Square",
     tier: "standard",
     cost: { supplies: 1, loyalty: 1 },
     turnsRequired: 2,
-    effects: "Enables festivals"
+    effects: "Unlocks festivals"
   },
   {
     id: "captains-quarters",

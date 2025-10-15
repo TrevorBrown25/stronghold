@@ -284,8 +284,11 @@ export const useStrongholdStore = create<StrongholdState>()(
           });
         },
         runFestival: () => {
-          const { resources, festivalUsed } = get();
+          const { resources, festivalUsed, projects } = get();
           if (festivalUsed) return false;
+          if (!hasCompletedProject(projects, "tavern-square")) {
+            return false;
+          }
           const cost: Partial<Record<ResourceType, number>> = {
             wealth: 1,
             supplies: 1

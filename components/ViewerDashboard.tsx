@@ -338,6 +338,13 @@ export function ViewerDashboard() {
   const workOrderSummary = useStrongholdStore(selectors.workOrderSummary);
   const recruitmentSummary = useStrongholdStore(selectors.recruitmentSummary);
   const readyForces = useStrongholdStore(selectors.readyForces);
+  const hasTownSquare = useMemo(
+    () =>
+      projects.some(
+        (project) => project.id.includes("tavern-square") && project.completedTurn
+      ),
+    [projects]
+  );
 
   const troopById = useMemo(
     () => new Map(troops.map((troop) => [troop.id, troop])),
@@ -507,8 +514,20 @@ export function ViewerDashboard() {
           <SummaryCard title="Turn" value={`Turn ${turn}`} detail={`Current Phase: ${activePhase}`} />
           <SummaryCard
             title="Festival"
-            value={festivalUsed ? "Celebrated" : "Available"}
-            detail={festivalUsed ? "Festival has been used this turn." : "Festival can still be celebrated."}
+            value={
+              hasTownSquare
+                ? festivalUsed
+                  ? "Celebrated"
+                  : "Available"
+                : "Locked"
+            }
+            detail={
+              hasTownSquare
+                ? festivalUsed
+                  ? "Festival has been used this turn."
+                  : "Festival can still be celebrated."
+                : "Construct the Town Square to unlock festivals."
+            }
           />
           <SummaryCard
             title="Income"
