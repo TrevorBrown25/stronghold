@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 
-const PASSWORD = process.env.NEXT_PUBLIC_EDIT_PASSWORD ?? "Gengar";
+const ALLOWED_PASSWORDS = new Set(["Gengar"]);
 
 interface EditLockState {
   isLocked: boolean;
@@ -13,7 +13,7 @@ interface EditLockState {
 export const useEditLockStore = create<EditLockState>((set) => ({
   isLocked: true,
   unlock: (password) => {
-    if (password === PASSWORD) {
+    if (ALLOWED_PASSWORDS.has(password)) {
       set({ isLocked: false });
       return true;
     }
