@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
 
 import { CaptainsPanel } from "@/components/CaptainsPanel";
@@ -25,6 +26,7 @@ import { useSupabaseSync } from "@/lib/useSupabaseSync";
 import { useStrongholdStore } from "@/lib/store";
 
 export default function Home() {
+  const router = useRouter();
   const activePhase = useStrongholdStore((state) => state.activePhase);
   const nextPhase = useStrongholdStore((state) => state.nextPhase);
   const completeTurn = useStrongholdStore((state) => state.completeTurn);
@@ -32,6 +34,7 @@ export default function Home() {
   const resetCampaign = useStrongholdStore((state) => state.resetCampaign);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const [roleModalOpen, setRoleModalOpen] = useState(true);
   const isLocked = useEditLockStore(selectIsLocked);
   const {
     status: syncStatus,
@@ -161,6 +164,15 @@ export default function Home() {
     }
   }, [isLocked, pushUpdate]);
 
+  const handleSelectDm = useCallback(() => {
+    setRoleModalOpen(false);
+  }, []);
+
+  const handleSelectPc = useCallback(() => {
+    setRoleModalOpen(false);
+    router.push("/viewer");
+  }, [router]);
+
   const renderPhaseContent = () => {
     switch (activePhase) {
       case "Dashboard":
@@ -184,6 +196,30 @@ export default function Home() {
 
   return (
     <main className="min-h-screen px-4 py-6 text-slate-100 sm:px-6">
+      {roleModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-4">
+          <div className="w-full max-w-md rounded-xl border border-white/10 bg-slate-900/90 p-6 text-center shadow-xl">
+            <h2 className="text-xl font-semibold text-slate-100">Welcome to Stronghold</h2>
+            <p className="mt-3 text-sm text-slate-300">
+              Are you managing the campaign as the Dungeon Master or viewing it as a Player Character?
+            </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <button
+                onClick={handleSelectDm}
+                className="rounded-full bg-indigo-500 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-indigo-400"
+              >
+                I&apos;m the DM
+              </button>
+              <button
+                onClick={handleSelectPc}
+                className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-5 py-2 text-sm font-semibold text-emerald-200 transition hover:border-emerald-300 hover:bg-emerald-500/20"
+              >
+                I&apos;m a PC
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <EditLockBanner />
       <section className="mx-auto mb-4 w-full max-w-7xl">
         <div className="glass-panel flex flex-col gap-2 text-sm text-slate-300 sm:flex-row sm:items-center sm:justify-between">
