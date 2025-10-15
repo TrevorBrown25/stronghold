@@ -58,7 +58,10 @@ export default function Home() {
 
   const lastSyncedLabel = useMemo(() => {
     if (!lastSyncedAt) return null;
-    return lastSyncedAt.toLocaleTimeString([], {
+    return lastSyncedAt.toLocaleString([], {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
       hour: "2-digit",
       minute: "2-digit"
     });
