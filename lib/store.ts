@@ -12,6 +12,7 @@ import {
 } from "./data";
 import type {
   Captain,
+  EdictType,
   EventEntry,
   IncomeType,
   Mission,
@@ -50,7 +51,7 @@ export interface StrongholdData {
   festivalUsed: boolean;
   income?: IncomeType;
   incomeTurn?: number;
-  edict?: "Harvest" | "Trade" | "Town Hall" | "Draft";
+  edict?: EdictType;
   edictTurn?: number;
   projects: ProjectInstance[];
   recruitments: RecruitmentInstance[];

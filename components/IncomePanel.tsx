@@ -2,25 +2,18 @@
 
 import { useState } from "react";
 
+import { EDICT_CHOICES } from "@/lib/effects";
 import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { useStrongholdStore } from "@/lib/store";
+import type { EdictType } from "@/lib/types";
 import { clsx } from "clsx";
-
-const EDICTS: Array<{ value: "Harvest" | "Trade" | "Town Hall" | "Draft"; description: string }> = [
-  { value: "Harvest", description: "+1 Supplies" },
-  { value: "Trade", description: "+1 Wealth" },
-  { value: "Town Hall", description: "+1 Loyalty" },
-  { value: "Draft", description: "+1 Supplies, -1 Loyalty" }
-];
 
 export function IncomePanel() {
   const applyEdict = useStrongholdStore((state) => state.applyEdict);
   const edict = useStrongholdStore((state) => state.edict);
   const edictTurn = useStrongholdStore((state) => state.edictTurn);
   const turn = useStrongholdStore((state) => state.turn);
-  const [selected, setSelected] = useState<"Harvest" | "Trade" | "Town Hall" | "Draft">(
-    edict ?? "Harvest"
-  );
+  const [selected, setSelected] = useState<EdictType>(edict ?? EDICT_CHOICES[0].type);
   const isLocked = useEditLockStore(selectIsLocked);
 
   const handleApply = () => {
@@ -37,12 +30,12 @@ export function IncomePanel() {
         </p>
       </header>
       <div className="grid gap-2 md:grid-cols-2">
-        {EDICTS.map((option) => (
+        {EDICT_CHOICES.map((option) => (
           <label
-            key={option.value}
+            key={option.type}
             className={clsx(
               "flex flex-col gap-1 rounded-2xl border px-3 py-2 text-sm transition",
-              selected === option.value
+              selected === option.type
                 ? "border-indigo-400/70 bg-indigo-500/10 shadow-[0_18px_35px_-20px_rgba(79,70,229,0.9)]"
                 : "border-white/10 bg-slate-900/50",
               isLocked ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:border-indigo-400/50 hover:bg-slate-900/60"
@@ -52,13 +45,13 @@ export function IncomePanel() {
               <input
                 type="radio"
                 name="edict"
-                value={option.value}
-                checked={selected === option.value}
-                onChange={() => setSelected(option.value)}
+                value={option.type}
+                checked={selected === option.type}
+                onChange={() => setSelected(option.type)}
                 disabled={isLocked}
                 className="accent-indigo-400"
               />
-              <span className="font-semibold text-slate-100">{option.value}</span>
+              <span className="font-semibold text-slate-100">{option.type}</span>
             </span>
             <span className="text-xs text-slate-400">{option.description}</span>
           </label>

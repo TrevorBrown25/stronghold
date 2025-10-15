@@ -3,6 +3,7 @@
 import { useMemo, type ReactNode } from "react";
 import { clsx } from "clsx";
 
+import { EDICT_EFFECT_DESCRIPTIONS, INCOME_EFFECT_DESCRIPTIONS } from "@/lib/effects";
 import { selectors, useStrongholdStore } from "@/lib/store";
 import {
   RESOURCE_TYPES,
@@ -532,12 +533,30 @@ export function ViewerDashboard() {
           <SummaryCard
             title="Income"
             value={income ?? "Not selected"}
-            detail={incomeTurn ? `Applied on Turn ${incomeTurn}` : "Awaiting selection."}
+            detail={
+              income
+                ? [
+                    INCOME_EFFECT_DESCRIPTIONS[income],
+                    incomeTurn ? `Applied on Turn ${incomeTurn}` : null
+                  ]
+                    .filter(Boolean)
+                    .join(" • ")
+                : "Awaiting selection."
+            }
           />
           <SummaryCard
             title="Edict"
             value={edict ?? "Not declared"}
-            detail={edictTurn ? `Declared on Turn ${edictTurn}` : "No edict in effect."}
+            detail={
+              edict
+                ? [
+                    EDICT_EFFECT_DESCRIPTIONS[edict],
+                    edictTurn ? `Declared on Turn ${edictTurn}` : null
+                  ]
+                    .filter(Boolean)
+                    .join(" • ")
+                : "No edict in effect."
+            }
           />
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
