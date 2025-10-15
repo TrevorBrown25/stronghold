@@ -12,6 +12,8 @@ export type IncomeType =
   | "Purchase Reserves"
   | "Supply Expedition";
 
+export type EdictType = "Harvest" | "Trade" | "Town Hall" | "Draft";
+
 export type ProjectTier = "standard" | "advanced" | "wonder";
 
 export interface ProjectTemplate {

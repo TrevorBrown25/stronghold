@@ -1,5 +1,6 @@
 "use client";
 
+import { EDICT_EFFECT_DESCRIPTIONS, INCOME_EFFECT_DESCRIPTIONS } from "@/lib/effects";
 import { selectors, useStrongholdStore } from "@/lib/store";
 import { RESOURCE_TYPES, type ResourceType } from "@/lib/types";
 
@@ -11,6 +12,10 @@ const RESOURCE_LABELS: Record<ResourceType, string> = {
 
 export function DashboardPanel() {
   const resources = useStrongholdStore((state) => state.resources);
+  const income = useStrongholdStore((state) => state.income);
+  const incomeTurn = useStrongholdStore((state) => state.incomeTurn);
+  const edict = useStrongholdStore((state) => state.edict);
+  const edictTurn = useStrongholdStore((state) => state.edictTurn);
   const projects = useStrongholdStore((state) => state.projects);
   const recruitments = useStrongholdStore((state) => state.recruitments);
   const troops = useStrongholdStore((state) => state.troops);
@@ -69,6 +74,24 @@ export function DashboardPanel() {
     .slice()
     .sort((a, b) => b.turn - a.turn);
 
+  const incomeSummary = income
+    ? [
+        `${income} (${INCOME_EFFECT_DESCRIPTIONS[income]})`,
+        incomeTurn ? `Applied Turn ${incomeTurn}` : null
+      ]
+        .filter(Boolean)
+        .join(" • ")
+    : "Not selected.";
+
+  const edictSummary = edict
+    ? [
+        `${edict} (${EDICT_EFFECT_DESCRIPTIONS[edict]})`,
+        edictTurn ? `Declared Turn ${edictTurn}` : null
+      ]
+        .filter(Boolean)
+        .join(" • ")
+    : "Not declared.";
+
   return (
     <section className="glass-panel flex flex-col gap-4">
       <header className="flex flex-wrap items-center justify-between gap-3">
@@ -104,6 +127,14 @@ export function DashboardPanel() {
               </div>
             ))}
           </div>
+          <div className="mt-2 flex flex-col gap-1 text-xs text-slate-400">
+            <div>
+              <span className="font-semibold text-slate-300">Income:</span> {incomeSummary}
+            </div>
+            <div>
+              <span className="font-semibold text-slate-300">Edict:</span> {edictSummary}
+            </div>
+          </div>
         </section>
         <section className="glass-section flex flex-col gap-3">
           <h3 className="text-lg font-semibold text-slate-100">Projects</h3>
@@ -128,6 +159,7 @@ export function DashboardPanel() {
                       {project.progress}/{project.turnsRequired} turns
                     </span>
                   </div>
+                  <p className="text-xs text-slate-400">Effect: {project.effects}</p>
                 </li>
               ))}
             </ul>
@@ -153,6 +185,7 @@ export function DashboardPanel() {
                       Turn {project.completedTurn}
                     </span>
                   </div>
+                  <p className="text-xs text-slate-400">Effect: {project.effects}</p>
                 </li>
               ))}
             </ul>

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
+import { INCOME_CHOICES } from "@/lib/effects";
 import { selectors, useStrongholdStore } from "@/lib/store";
 import type { IncomeType, ResourceType } from "@/lib/types";
 import { clsx } from "clsx";
@@ -12,19 +13,6 @@ const RESOURCE_LABELS: Record<ResourceType, string> = {
   supplies: "Supplies",
   loyalty: "Loyalty"
 };
-
-const INCOME_OPTIONS: Array<{ value: IncomeType; description: string }> = [
-  { value: "Collect Taxes", description: "+1 Wealth" },
-  {
-    value: "Trade Commodities",
-    description: "Convert 1 Supplies into +1 Wealth"
-  },
-  {
-    value: "Purchase Reserves",
-    description: "Convert 1 Wealth into +1 Supplies"
-  },
-  { value: "Supply Expedition", description: "+1 Supplies" }
-];
 
 export function ResourceTracker() {
   const resources = useStrongholdStore((state) => state.resources);
@@ -113,12 +101,12 @@ export function ResourceTracker() {
             <span className="text-xs text-slate-500">Focus the treasury</span>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
-            {INCOME_OPTIONS.map((option) => (
+            {INCOME_CHOICES.map((option) => (
               <label
-                key={option.value}
+                key={option.type}
                 className={clsx(
                   "flex flex-col gap-1 rounded-2xl border px-3 py-2 text-xs transition",
-                  selectedIncome === option.value
+                  selectedIncome === option.type
                     ? "border-indigo-400/70 bg-indigo-500/10 shadow-[0_18px_35px_-20px_rgba(79,70,229,0.9)]"
                     : "border-white/10 bg-slate-900/50",
                   isLocked
@@ -130,14 +118,14 @@ export function ResourceTracker() {
                   <input
                     type="radio"
                     name="income"
-                    value={option.value}
-                    checked={selectedIncome === option.value}
-                    onChange={() => setSelectedIncome(option.value)}
+                    value={option.type}
+                    checked={selectedIncome === option.type}
+                    onChange={() => setSelectedIncome(option.type)}
                     disabled={isLocked}
                     className="accent-indigo-400"
                   />
                   <span className="font-semibold text-slate-100">
-                    {option.value}
+                    {option.type}
                   </span>
                 </span>
                 <span className="text-[11px] text-slate-400">
