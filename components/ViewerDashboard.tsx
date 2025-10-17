@@ -505,6 +505,8 @@ export function ViewerDashboard() {
     [notes]
   );
 
+  const currentTurnIncome = incomeTurn === turn ? income : undefined;
+
   return (
     <div className="flex flex-col gap-6">
       <SectionShell
@@ -532,16 +534,16 @@ export function ViewerDashboard() {
           />
           <SummaryCard
             title="Income"
-            value={income ?? "Not selected"}
+            value={currentTurnIncome ?? "Not selected"}
             detail={
-              income
+              currentTurnIncome
                 ? [
-                    INCOME_EFFECT_DESCRIPTIONS[income],
+                    INCOME_EFFECT_DESCRIPTIONS[currentTurnIncome],
                     incomeTurn ? `Applied on Turn ${incomeTurn}` : null
                   ]
                     .filter(Boolean)
                     .join(" • ")
-                : "Awaiting selection."
+                : "No income selected this turn."
             }
           />
           <SummaryCard
