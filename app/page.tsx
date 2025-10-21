@@ -20,6 +20,7 @@ import { TroopTable } from "@/components/TroopTable";
 import { TroopMatchupsPanel } from "@/components/TroopMatchupsPanel";
 import { TurnSummaryModal } from "@/components/TurnSummaryModal";
 import { ResetConfirmationModal } from "@/components/ResetConfirmationModal";
+import { SessionsPanel } from "@/components/SessionsPanel";
 import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { subscribeToRefresh } from "@/lib/refreshChannel";
 import { useSupabaseSync } from "@/lib/useSupabaseSync";
@@ -189,6 +190,8 @@ export default function Home() {
         return <MissionsPanel />;
       case "Events":
         return <EventsPanel />;
+      case "Sessions":
+        return <SessionsPanel />;
       default:
         return null;
     }
