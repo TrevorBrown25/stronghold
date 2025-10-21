@@ -17,6 +17,7 @@ import type {
   IncomeType,
   Mission,
   NoteEntry,
+  SessionRecapEntry,
   ProjectInstance,
   ProjectTemplate,
   RecruitmentInstance,
@@ -32,7 +33,8 @@ export type PhaseKey =
   | "Recruitment"
   | "PC Actions"
   | "Missions"
-  | "Events";
+  | "Events"
+  | "Sessions";
 
 export const PHASES: PhaseKey[] = [
   "Dashboard",
@@ -41,7 +43,8 @@ export const PHASES: PhaseKey[] = [
   "Recruitment",
   "PC Actions",
   "Missions",
-  "Events"
+  "Events",
+  "Sessions"
 ];
 
 export interface StrongholdData {
@@ -60,6 +63,7 @@ export interface StrongholdData {
   missions: Mission[];
   events: EventEntry[];
   notes: NoteEntry[];
+  sessions: SessionRecapEntry[];
   turnHistory: string[];
 }
 
@@ -86,6 +90,9 @@ interface StrongholdState extends StrongholdData {
   addEvent: (entry: Omit<EventEntry, "id" | "turn">) => void;
   toggleEventResolved: (id: string) => void;
   addNote: (note: Omit<NoteEntry, "id" | "turn">) => void;
+  addSessionRecap: (
+    recap: Omit<SessionRecapEntry, "id" | "turn">
+  ) => void;
   setPhase: (phase: PhaseKey) => void;
   nextPhase: () => void;
   completeTurn: () => void;
@@ -242,6 +249,7 @@ function serializeState(state: StrongholdState): StrongholdData {
     missions: state.missions,
     events: state.events,
     notes: state.notes,
+    sessions: state.sessions,
     turnHistory: state.turnHistory
   };
 
@@ -269,6 +277,7 @@ export const useStrongholdStore = create<StrongholdState>()(
         missions: [],
         events: [],
         notes: [],
+        sessions: [],
         turnHistory: [],
         incrementResource: (resource, delta) => {
           set((state) => {
@@ -729,6 +738,31 @@ export const useStrongholdStore = create<StrongholdState>()(
             ]
           }));
         },
+        addSessionRecap: (entry) => {
+          set((state) => {
+            const normalizedTitle = entry.title.trim();
+            const normalizedRecap = entry.recap.trim();
+            const normalizedDate = entry.date?.trim();
+
+            if (!normalizedRecap) {
+              return {};
+            }
+
+            return {
+              sessions: [
+                ...state.sessions,
+                {
+                  id: uuid(),
+                  title:
+                    normalizedTitle || `Session ${state.sessions.length + 1}`,
+                  recap: normalizedRecap,
+                  date: normalizedDate ? normalizedDate : undefined,
+                  turn: state.turn
+                }
+              ]
+            };
+          });
+        },
         setPhase: (phase) => set({ activePhase: phase }),
         nextPhase: () => {
           const { activePhase } = get();
@@ -785,6 +819,7 @@ export const useStrongholdStore = create<StrongholdState>()(
             missions: snapshot.missions ?? state.missions,
             events: snapshot.events ?? state.events,
             notes: snapshot.notes ?? state.notes,
+            sessions: snapshot.sessions ?? state.sessions,
             turnHistory: snapshot.turnHistory ?? state.turnHistory
           }));
         },
@@ -809,6 +844,7 @@ export const useStrongholdStore = create<StrongholdState>()(
             missions: [],
             events: [],
             notes: [],
+            sessions: [],
             turnHistory: []
           });
         }

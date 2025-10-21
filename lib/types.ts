@@ -113,3 +113,11 @@ export interface NoteEntry {
   player: string;
   details: string;
 }
+
+export interface SessionRecapEntry {
+  id: string;
+  turn: number;
+  title: string;
+  recap: string;
+  date?: string;
+}
