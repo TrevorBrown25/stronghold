@@ -760,28 +760,41 @@ export function ViewerDashboard() {
                   key={captain.id}
                   className="flex flex-col gap-2 rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <h4 className="text-lg font-semibold text-white">{captain.name}</h4>
-                      <p className="text-xs uppercase tracking-wide text-slate-500">
-                        {captain.specialty}
-                      </p>
-                    </div>
-                    {captain.traits?.length ? (
-                      <span className="glass-badge text-[11px]">
-                        {captain.traits.join(" • ")}
-                      </span>
-                    ) : null}
+                  <div>
+                    <h4 className="text-lg font-semibold text-white">{captain.name}</h4>
+                    <p className="text-xs uppercase tracking-wide text-slate-500">
+                      {captain.title}
+                    </p>
+                    <p className="mt-1 text-xs italic text-slate-400">{captain.flavor}</p>
                   </div>
-                  {captain.notes ? (
-                    <p className="text-xs text-slate-400">{captain.notes}</p>
-                  ) : null}
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Assignment
-                  </p>
-                  <p className="text-sm text-slate-300">
-                    {assignedMission ? assignedMission.name : "Unassigned"}
-                  </p>
+                  <ul className="space-y-1 text-xs text-slate-300">
+                    {captain.abilities.map((ability) => (
+                      <li key={ability} className="flex gap-2">
+                        <span className="text-slate-500">•</span>
+                        <span className="leading-snug">{ability}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {captain.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {captain.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full bg-slate-800/60 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-200"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <div className="mt-auto">
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                      Assignment
+                    </p>
+                    <p className="text-sm text-slate-300">
+                      {assignedMission ? assignedMission.name : captain.status}
+                    </p>
+                  </div>
                 </div>
               );
             })

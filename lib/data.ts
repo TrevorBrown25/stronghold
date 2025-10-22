@@ -339,23 +339,76 @@ export const recruitmentCatalog: RecruitmentOption[] = [
 
 export const captainRoster: Captain[] = [
   {
+    id: "latchkey-vale",
+    name: "Latchkey Vale",
+    title: "Spy Master of the Rebellion",
+    flavor: "(Cunning, quiet, always two steps ahead.)",
+    abilities: [
+      "+2 to Spy Missions and Scout Missions.",
+      "Special: If a Spy or Scout mission fails by 5 or less, Latchkey can spend 1 Loyalty to turn it into a partial success (reduced reward, no penalty)."
+    ],
+    tags: ["Spy +2", "Scout +2", "Partial success conversion (1 Loyalty)"],
+    status: "Ready for deployment"
+  },
+  {
+    id: "rook",
+    name: "Rook the Ranger of Legend",
+    title: "Hunter of Monsters and Men",
+    flavor: "(A mythic woodsman who knows every trail, every shadow.)",
+    abilities: [
+      "Advantage on Scout and Wilderness Battle Missions.",
+      "Special: When commanding Archers or Scouts, they gain +1 to their rolls."
+    ],
+    tags: ["Scout advantage", "Battle (Wilderness) advantage", "Archer/Scout +1 synergy"],
+    status: "Ready for deployment"
+  },
+  {
+    id: "kal-red",
+    name: "Kal Red, the Artificer",
+    title: "Master Smith, Inventor, and Tinkerer Extraordinaire",
+    flavor: "(He builds miracles out of scrap and makes the impossible functional.)",
+    abilities: [
+      "+2 to Crafting and Engineering Projects (Blacksmith, Armorer, Master Forge, etc.).",
+      "Special: Once per Stronghold turn, Kal can complete 1 Project step for free if it involves weapons, armor, or siege craft."
+    ],
+    tags: ["Crafting +2", "Engineering +2", "1 free build step (per turn, relevant projects only)"],
+    status: "Ready for deployment"
+  },
+  {
     id: "takk",
     name: "Takk",
-    specialty: "Advantage on Battle rolls",
-    notes: "Orc war leader",
-    traits: ["Battle advantage"]
+    title: "War Leader of the Iron Banner",
+    flavor: "(Orc war leader who thrives in the crash of steel.)",
+    abilities: [
+      "Advantage on all Battle mission rolls.",
+      "Special: His brutal tactics give allied melee troops +1 when he leads them into the fray."
+    ],
+    tags: ["Battle advantage", "Melee synergy", "Orc warband"],
+    status: "Ready for deployment"
   },
   {
     id: "jeff",
     name: "Jeff",
-    specialty: "+3 to Spy missions",
-    traits: ["Spy +3"]
+    title: "Shadowbroker of the Low Quarter",
+    flavor: "(A patient spymaster with contacts in every guildhall.)",
+    abilities: [
+      "+3 to Spy missions.",
+      "Special: Master of coded dead drops who keeps fallout minimal even when things go sideways."
+    ],
+    tags: ["Spy +3", "Underworld intel", "Quiet cleanup"],
+    status: "Ready for deployment"
   },
   {
     id: "tricky",
     name: "Tricky",
-    specialty: "Advantage on Diplomacy & Trade",
-    traits: ["Diplomacy advantage", "Trade advantage"]
+    title: "Deal-Maker of the Sapphire Courts",
+    flavor: "(Silver tongue, quicker smile, and ledgers to match.)",
+    abilities: [
+      "Advantage on Diplomacy and Trade missions.",
+      "Special: Turns stalemates into concessions, gaining an extra favor when negotiations succeed."
+    ],
+    tags: ["Diplomacy advantage", "Trade advantage", "Silver tongue"],
+    status: "Ready for deployment"
   }
 ];
 
