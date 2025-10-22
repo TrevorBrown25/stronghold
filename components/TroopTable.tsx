@@ -84,7 +84,7 @@ export function TroopTable() {
 
   const handleMissionSuccess = (troop: Troop) => {
     if (isLocked) return;
-    updateTroopStatus(troop.id, "active", 1);
+    updateTroopStatus(troop.id, "resting", 1);
   };
 
   const handleMissionFailure = (troop: Troop) => {
