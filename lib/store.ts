@@ -199,6 +199,56 @@ function trainingCapacity(projects: ProjectInstance[]): number {
   return capacity;
 }
 
+type LegacyCaptainSnapshot = Partial<Captain> & {
+  id: string;
+  name?: string;
+  specialty?: string;
+  notes?: string;
+  traits?: string[];
+};
+
+function normalizeCaptainSnapshot(snapshot: LegacyCaptainSnapshot): Captain {
+  const rosterCaptain = captainRoster.find((captain) => captain.id === snapshot.id);
+
+  const name = snapshot.name ?? rosterCaptain?.name ?? "Unknown Captain";
+  const title = snapshot.title ?? rosterCaptain?.title ?? "";
+  const flavor = snapshot.flavor ?? rosterCaptain?.flavor ?? snapshot.notes ?? "";
+
+  const abilities = Array.isArray(snapshot.abilities)
+    ? [...snapshot.abilities]
+    : snapshot.specialty
+    ? [snapshot.specialty]
+    : rosterCaptain?.abilities
+    ? [...rosterCaptain.abilities]
+    : [];
+
+  const tags = Array.isArray(snapshot.tags)
+    ? [...snapshot.tags]
+    : Array.isArray(snapshot.traits)
+    ? [...snapshot.traits]
+    : rosterCaptain?.tags
+    ? [...rosterCaptain.tags]
+    : [];
+
+  const status = snapshot.status ?? rosterCaptain?.status ?? "Ready for deployment";
+
+  const assignedMissionId =
+    snapshot.assignedMissionId !== undefined
+      ? snapshot.assignedMissionId ?? null
+      : rosterCaptain?.assignedMissionId ?? null;
+
+  return {
+    id: snapshot.id,
+    name,
+    title,
+    flavor,
+    abilities,
+    tags,
+    status,
+    assignedMissionId
+  };
+}
+
 function hasCompletedProject(projects: ProjectInstance[], templateId: string): boolean {
   return projects.some((project) => project.id.includes(templateId) && project.completedTurn);
 }
@@ -819,7 +869,11 @@ export const useStrongholdStore = create<StrongholdState>()(
             edictTurn: snapshot.edictTurn,
             projects: snapshot.projects ?? state.projects,
             recruitments: snapshot.recruitments ?? state.recruitments,
-            captains: snapshot.captains ?? state.captains,
+            captains: snapshot.captains
+              ? snapshot.captains.map((captain) =>
+                  normalizeCaptainSnapshot(captain as LegacyCaptainSnapshot)
+                )
+              : state.captains,
             troops: snapshot.troops ?? state.troops,
             missions: snapshot.missions ?? state.missions,
             events: snapshot.events ?? state.events,
