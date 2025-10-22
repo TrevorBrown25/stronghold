@@ -12,7 +12,12 @@ import {
   type Troop as TroopKind
 } from "@/lib/matchups";
 
-const STATUS_OPTIONS: TroopStatus[] = ["active", "deployed", "recovering"];
+const STATUS_OPTIONS: TroopStatus[] = [
+  "active",
+  "resting",
+  "deployed",
+  "recovering"
+];
 
 export function TroopTable() {
   const troops = useStrongholdStore((state) => state.troops);
