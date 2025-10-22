@@ -18,9 +18,9 @@ export function ResourceOverview() {
 
   return (
     <section className="glass-panel flex flex-col gap-4">
-      <header className="flex items-center justify-between">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="font-display text-2xl text-slate-100">Resources</h2>
-        <div className="flex gap-4 text-sm">
+        <div className="flex flex-wrap gap-2 text-sm sm:justify-end sm:gap-3">
           <span className="glass-badge">
             Work Orders {used}/{capacity}
           </span>
