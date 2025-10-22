@@ -81,9 +81,9 @@ export function ResourceTracker() {
 
   return (
     <section className="glass-panel flex flex-col gap-4">
-      <header className="flex items-center justify-between">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="font-display text-2xl text-slate-100">Resources</h2>
-        <div className="flex gap-4 text-sm">
+        <div className="flex flex-wrap gap-2 text-sm sm:justify-end sm:gap-3">
           <span className="glass-badge">
             Work Orders {used}/{capacity}
           </span>
@@ -93,9 +93,9 @@ export function ResourceTracker() {
           <span className="glass-badge">Ready Forces {readyForces}</span>
         </div>
       </header>
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {renderResourceControl("wealth")}
-        <div className="glass-section col-span-2 flex flex-col gap-3 md:col-span-2">
+        <div className="glass-section flex flex-col gap-3 sm:col-span-2 lg:col-span-2">
           <div className="flex items-center justify-between text-sm font-semibold text-slate-200">
             <span className="text-slate-400">Income Activity</span>
             <span className="text-xs text-slate-500">Focus the treasury</span>
