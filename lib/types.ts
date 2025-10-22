@@ -65,10 +65,12 @@ export type MissionScale = "Skirmish" | "Raid" | "Battle" | "Siege";
 export interface Captain {
   id: string;
   name: string;
-  specialty: string;
-  notes?: string;
+  title: string;
+  flavor: string;
+  abilities: string[];
+  tags: string[];
+  status: string;
   assignedMissionId?: string | null;
-  traits?: string[];
 }
 
 export type TroopStatus = "active" | "resting" | "deployed" | "recovering";

@@ -253,7 +253,9 @@ export function MissionsPanel() {
                     })}
                   </div>
                   {captain && (
-                    <p className="mt-2 text-xs text-slate-400">{captain.specialty}</p>
+                    <p className="mt-2 text-xs text-slate-400">
+                      {captain.title}
+                    </p>
                   )}
                 </div>
                 <div className="rounded-2xl border border-white/5 bg-slate-900/40 p-3">
