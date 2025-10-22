@@ -788,6 +788,11 @@ export const useStrongholdStore = create<StrongholdState>()(
               ...captain,
               assignedMissionId: null
             })),
+            troops: state.troops.map((troop) =>
+              troop.status === "resting"
+                ? { ...troop, status: "active" }
+                : troop
+            ),
             resources: { ...state.resources },
             festivalUsed: false,
             turnHistory: [...state.turnHistory, summary]

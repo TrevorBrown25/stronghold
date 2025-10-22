@@ -313,6 +313,7 @@ function statusBadgeClass(status: Troop["status"]) {
     "inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide",
     {
       "border border-emerald-400/40 bg-emerald-500/10 text-emerald-200": status === "active",
+      "border border-indigo-400/40 bg-indigo-500/10 text-indigo-200": status === "resting",
       "border border-sky-400/40 bg-sky-500/10 text-sky-200": status === "deployed",
       "border border-amber-400/40 bg-amber-500/10 text-amber-200": status === "recovering"
     }
@@ -437,12 +438,12 @@ export function ViewerDashboard() {
   }, [completedRecruitments, troops, troopById]);
 
   const statusCounts = useMemo(() => {
-    return troops.reduce(
+    return troops.reduce<Record<Troop["status"], number>>(
       (acc, troop) => {
         acc[troop.status] += 1;
         return acc;
       },
-      { active: 0, deployed: 0, recovering: 0 }
+      { active: 0, resting: 0, deployed: 0, recovering: 0 }
     );
   }, [troops]);
 
@@ -641,8 +642,9 @@ export function ViewerDashboard() {
         title="Military Forces"
         description="Troop readiness and roster details."
       >
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <SummaryCard title="Active" value={`${statusCounts.active}`} detail="Standing forces ready to deploy." />
+          <SummaryCard title="Resting" value={`${statusCounts.resting}`} detail="Units standing down until the next turn." />
           <SummaryCard title="Deployed" value={`${statusCounts.deployed}`} detail="Units currently on missions." />
           <SummaryCard title="Recovering" value={`${statusCounts.recovering}`} detail="Units recuperating from losses." />
         </div>
