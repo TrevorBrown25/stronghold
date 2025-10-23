@@ -90,9 +90,19 @@ interface StrongholdState extends StrongholdData {
   addEvent: (entry: Omit<EventEntry, "id" | "turn">) => void;
   toggleEventResolved: (id: string) => void;
   addNote: (note: Omit<NoteEntry, "id" | "turn">) => void;
+  updateNote: (
+    id: string,
+    updates: Pick<NoteEntry, "player" | "details">
+  ) => void;
+  deleteNote: (id: string) => void;
   addSessionRecap: (
     recap: Omit<SessionRecapEntry, "id" | "turn">
   ) => void;
+  updateSessionRecap: (
+    id: string,
+    updates: Pick<SessionRecapEntry, "title" | "recap" | "date">
+  ) => void;
+  deleteSessionRecap: (id: string) => void;
   setPhase: (phase: PhaseKey) => void;
   nextPhase: () => void;
   completeTurn: () => void;
@@ -788,6 +798,18 @@ export const useStrongholdStore = create<StrongholdState>()(
             ]
           }));
         },
+        updateNote: (id, updates) => {
+          set((state) => ({
+            notes: state.notes.map((note) =>
+              note.id === id ? { ...note, ...updates } : note
+            )
+          }));
+        },
+        deleteNote: (id) => {
+          set((state) => ({
+            notes: state.notes.filter((note) => note.id !== id)
+          }));
+        },
         addSessionRecap: (entry) => {
           set((state) => {
             const normalizedTitle = entry.title.trim();
@@ -812,6 +834,18 @@ export const useStrongholdStore = create<StrongholdState>()(
               ]
             };
           });
+        },
+        updateSessionRecap: (id, updates) => {
+          set((state) => ({
+            sessions: state.sessions.map((session) =>
+              session.id === id ? { ...session, ...updates } : session
+            )
+          }));
+        },
+        deleteSessionRecap: (id) => {
+          set((state) => ({
+            sessions: state.sessions.filter((session) => session.id !== id)
+          }));
         },
         setPhase: (phase) => set({ activePhase: phase }),
         nextPhase: () => {
