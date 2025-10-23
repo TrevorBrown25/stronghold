@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent
+} from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
@@ -25,7 +32,158 @@ import { SessionsPanel } from "@/components/SessionsPanel";
 import { selectIsLocked, useEditLockStore } from "@/lib/editLock";
 import { subscribeToRefresh } from "@/lib/refreshChannel";
 import { useSupabaseSync } from "@/lib/useSupabaseSync";
-import { useStrongholdStore } from "@/lib/store";
+import { PHASES, useStrongholdStore } from "@/lib/store";
+import type { PhaseKey, StrongholdData } from "@/lib/store";
+import { RESOURCE_TYPES } from "@/lib/types";
+import type { EdictType, IncomeType } from "@/lib/types";
+
+const INCOME_TYPES: readonly IncomeType[] = [
+  "Collect Taxes",
+  "Trade Commodities",
+  "Purchase Reserves",
+  "Supply Expedition"
+];
+
+const EDICT_TYPES: readonly EdictType[] = [
+  "Harvest",
+  "Trade",
+  "Town Hall",
+  "Draft"
+];
+
+const PHASE_SET = new Set<PhaseKey>(PHASES);
+const INCOME_TYPE_SET = new Set<IncomeType>(INCOME_TYPES);
+const EDICT_TYPE_SET = new Set<EdictType>(EDICT_TYPES);
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function validateStrongholdData(value: unknown): StrongholdData {
+  if (!isRecord(value)) {
+    throw new Error("Imported JSON must describe a Stronghold snapshot object.");
+  }
+
+  const candidate = value as Partial<StrongholdData>;
+
+  if (typeof candidate.turn !== "number" || !Number.isFinite(candidate.turn)) {
+    throw new Error("The snapshot's turn value must be a number.");
+  }
+
+  if (typeof candidate.activePhase !== "string" || !PHASE_SET.has(candidate.activePhase as PhaseKey)) {
+    throw new Error("The snapshot's active phase is not recognized.");
+  }
+
+  const resourcesCandidate = (value as Record<string, unknown>).resources;
+  if (!isRecord(resourcesCandidate)) {
+    throw new Error("Resources must be provided as an object.");
+  }
+
+  const resources = {} as Record<(typeof RESOURCE_TYPES)[number], number>;
+
+  for (const resource of RESOURCE_TYPES) {
+    const amount = (resourcesCandidate as Record<string, unknown>)[resource];
+    if (typeof amount !== "number" || !Number.isFinite(amount)) {
+      throw new Error(`Resource "${resource}" must be a number.`);
+    }
+    resources[resource] = amount;
+  }
+
+  if (typeof candidate.festivalUsed !== "boolean") {
+    throw new Error("festivalUsed must be a boolean value.");
+  }
+
+  if (
+    candidate.income !== undefined &&
+    (typeof candidate.income !== "string" || !INCOME_TYPE_SET.has(candidate.income as IncomeType))
+  ) {
+    throw new Error("income must be one of the supported income options.");
+  }
+
+  if (
+    candidate.edict !== undefined &&
+    (typeof candidate.edict !== "string" || !EDICT_TYPE_SET.has(candidate.edict as EdictType))
+  ) {
+    throw new Error("edict must be one of the supported edict options.");
+  }
+
+  if (
+    candidate.incomeTurn !== undefined &&
+    (typeof candidate.incomeTurn !== "number" || !Number.isFinite(candidate.incomeTurn))
+  ) {
+    throw new Error("incomeTurn must be a number when provided.");
+  }
+
+  if (
+    candidate.edictTurn !== undefined &&
+    (typeof candidate.edictTurn !== "number" || !Number.isFinite(candidate.edictTurn))
+  ) {
+    throw new Error("edictTurn must be a number when provided.");
+  }
+
+  const {
+    projects,
+    recruitments,
+    captains,
+    troops,
+    missions,
+    events,
+    notes,
+    sessions,
+    turnHistory
+  } = candidate;
+
+  if (!projects || !Array.isArray(projects)) {
+    throw new Error("projects must be an array.");
+  }
+  if (!recruitments || !Array.isArray(recruitments)) {
+    throw new Error("recruitments must be an array.");
+  }
+  if (!captains || !Array.isArray(captains)) {
+    throw new Error("captains must be an array.");
+  }
+  if (!troops || !Array.isArray(troops)) {
+    throw new Error("troops must be an array.");
+  }
+  if (!missions || !Array.isArray(missions)) {
+    throw new Error("missions must be an array.");
+  }
+  if (!events || !Array.isArray(events)) {
+    throw new Error("events must be an array.");
+  }
+  if (!notes || !Array.isArray(notes)) {
+    throw new Error("notes must be an array.");
+  }
+  if (!sessions || !Array.isArray(sessions)) {
+    throw new Error("sessions must be an array.");
+  }
+  if (!turnHistory || !Array.isArray(turnHistory)) {
+    throw new Error("turnHistory must be an array of strings.");
+  }
+  if (!turnHistory.every((entry) => typeof entry === "string")) {
+    throw new Error("turnHistory must contain only string entries.");
+  }
+
+  return {
+    turn: candidate.turn,
+    activePhase: candidate.activePhase as PhaseKey,
+    resources,
+    festivalUsed: candidate.festivalUsed,
+    income: candidate.income as IncomeType | undefined,
+    incomeTurn: candidate.incomeTurn,
+    edict: candidate.edict as EdictType | undefined,
+    edictTurn: candidate.edictTurn,
+    projects: projects as StrongholdData["projects"],
+    recruitments: recruitments as StrongholdData["recruitments"],
+    captains: captains as StrongholdData["captains"],
+    troops: troops as StrongholdData["troops"],
+    missions: missions as StrongholdData["missions"],
+    events: events as StrongholdData["events"],
+    notes: notes as StrongholdData["notes"],
+    sessions: sessions as StrongholdData["sessions"],
+    turnHistory: turnHistory as StrongholdData["turnHistory"]
+  };
+}
 
 export default function Home() {
   const router = useRouter();
@@ -37,6 +195,10 @@ export default function Home() {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [roleModalOpen, setRoleModalOpen] = useState(true);
+  const [importFeedback, setImportFeedback] = useState<
+    { type: "error" | "success"; message: string } | null
+  >(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const isLocked = useEditLockStore(selectIsLocked);
   const {
     status: syncStatus,
@@ -127,6 +289,57 @@ export default function Home() {
     completeTurn();
     setSummaryOpen(false);
   }, [completeTurn, isLocked]);
+
+  const handleStartImport = useCallback(() => {
+    if (isLocked) return;
+    setImportFeedback(null);
+    fileInputRef.current?.click();
+  }, [isLocked]);
+
+  const handleImportFile = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    setImportFeedback(null);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const result = reader.result;
+        if (typeof result !== "string") {
+          throw new Error("Unable to read the selected file.");
+        }
+        const parsed = JSON.parse(result);
+        const snapshot = validateStrongholdData(parsed);
+        useStrongholdStore.getState().hydrateFromSnapshot(snapshot);
+        setImportFeedback({
+          type: "success",
+          message:
+            "Backup imported successfully. Review the campaign to confirm everything looks correct."
+        });
+      } catch (error) {
+        console.error("Failed to import Stronghold snapshot:", error);
+        setImportFeedback({
+          type: "error",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Unable to import the selected file."
+        });
+      }
+    };
+    reader.onerror = () => {
+      console.error("Failed to read Stronghold snapshot file:", reader.error);
+      setImportFeedback({
+        type: "error",
+        message: "Unable to read the selected file."
+      });
+    };
+    reader.readAsText(file);
+    event.target.value = "";
+  }, []);
 
   const handleExport = () => {
     if (isLocked) return;
@@ -277,6 +490,13 @@ export default function Home() {
                 Open Player View
               </Link>
               <button
+                onClick={handleStartImport}
+                disabled={isLocked}
+                className="rounded-full border border-white/10 bg-slate-800/60 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-emerald-300 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Import JSON
+              </button>
+              <button
                 onClick={handleExport}
                 disabled={isLocked}
                 className="rounded-full border border-white/10 bg-slate-800/60 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-indigo-400 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
@@ -290,6 +510,24 @@ export default function Home() {
               >
                 Reset Campaign
               </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/json,.json"
+                className="hidden"
+                onChange={handleImportFile}
+              />
+              {importFeedback && (
+                <p
+                  className={clsx(
+                    "text-xs sm:text-sm",
+                    "sm:basis-full",
+                    importFeedback.type === "error" ? "text-rose-300" : "text-emerald-300"
+                  )}
+                >
+                  {importFeedback.message}
+                </p>
+              )}
             </div>
           )}
         </div>
