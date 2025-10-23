@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-The app stores campaign state in Supabase. Use the **Update Campaign** button to push your latest changes and the **Export JSON** button to download a backup of your campaign progress.
+The app stores campaign state in Supabase. Use the **Update Campaign** button to push your latest changes, the **Export JSON** button to download a backup of your campaign progress, and the **Import JSON** control to restore a saved snapshot. After importing a backup, review the dashboard to confirm every resource, project, and assignment looks correct before continuing play.
 
 ## Features
 
@@ -19,7 +19,7 @@ The app stores campaign state in Supabase. Use the **Update Campaign** button to
 - Mission planner with captain/troop assignments, 2d12 rolls, and outcome logging
 - Troop roster with status management and mission tracking
 - Event log and PC action journal for session notes
-- End-of-turn summary modal and JSON export/reset utilities
+- End-of-turn summary modal and JSON import/export/reset utilities
 - Optional Supabase-backed realtime sync with a read-only `/viewer` page for your players
 
 ## Supabase realtime sync (optional)
