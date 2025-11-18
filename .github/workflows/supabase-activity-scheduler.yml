@@ -1,0 +1,14 @@
+name: Supabase Activity Scheduler
+
+on:
+  schedule:
+    - cron: "0 0 * * 0,3"
+  workflow_dispatch:
+
+jobs:
+  send-http-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase activity endpoint
+        run: |
+          curl -sSf https://<YOUR_DOMAIN_NAME>/api/etc/supabase-activity-scheduler
