@@ -8,7 +8,9 @@ on:
 jobs:
   send-http-request:
     runs-on: ubuntu-latest
+    env:
+      SITE_URL: ${{ vars.SITE_URL || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
     steps:
       - name: Ping Supabase activity endpoint
         run: |
-          curl -sSf https://<YOUR_DOMAIN_NAME>/api/etc/supabase-activity-scheduler
+          curl -sSf "${SITE_URL%/}/api/etc/supabase-activity-scheduler"
